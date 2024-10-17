@@ -1,0 +1,89 @@
+.chat-container {
+  background-color: #f9f9f9; /* Світлий фон */
+  border: 1px solid #ccc; /* Рамка */
+  border-radius: 8px; /* Заокруглені кути */
+  padding: 20px; /* Внутрішній відступ */
+  width: 480px; /* Ширина чату */
+  max-height: 480px; /* Максимальна висота чату */
+  margin: auto; /* Центрування */
+  overflow: hidden; /* Сховати переповнені елементи */
+}
+
+.chat-header {
+  display: flex; /* Гнучке розташування для заголовка та кнопки виходу */
+  justify-content: space-between; /* Розміщення по краях */
+  align-items: center; /* Центрування по вертикалі */
+}
+
+.chat-title {
+  font-size: 18px; /* Розмір шрифту */
+  margin-bottom: 10px; /* Відступ знизу */
+}
+
+.message-list {
+  background-color: #ffffff; /* Білий фон для списку повідомлень */
+  border: 1px solid #ccc; /* Рамка */
+  border-radius: 8px; /* Заокруглені кути */
+  padding: 10px; /* Внутрішній відступ */
+  max-height: 300px; /* Максимальна висота */
+  overflow-y: auto; /* Прокрутка по вертикалі */
+  margin-bottom: 10px; /* Відступ знизу */
+}
+
+.input-container {
+  display: flex; /* Гнучке розташування для кнопок та інпуту */
+}
+
+.input {
+  flex: 1; /* Займати доступний простір */
+  padding: 10px; /* Внутрішній відступ */
+  border: 1px solid #ccc; /* Рамка */
+  border-radius: 4px; /* Заокруглені кути */
+  margin-right: 5px; /* Відступ праворуч */
+}
+
+.send-button {
+  background-color: purple; /* Фіолетовий колір */
+  color: white; /* Білий текст */
+  border: none; /* Без рамки */
+  padding: 15px; /* Внутрішній відступ */
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 4px; /* Заокруглені кути */
+  cursor: pointer; /* Курсор при наведенні */
+}
+
+.clear-chat-button {
+  background-color: red; /* Червоний колір */
+  color: white; /* Білий текст */
+  border: none; /* Без рамки */
+  padding: 15px; /* Внутрішній відступ */
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 4px; /* Заокруглені кути */
+  margin-left: 5px; /* Відступ ліворуч */
+  cursor: pointer; /* Курсор при наведенні */
+}
+
+.clear-chat-button:hover {
+  background-color: darkred; /* Темніший червоний колір при наведенні */
+}
+
+.send-button:hover {
+  background-color: darkviolet; /* Темніший фіолетовий колір при наведенні */
+}
+
+.sign-out-button {
+  background-color: red; /* Червоний колір для кнопки виходу */
+  color: white; /* Білий текст */
+  border: none; /* Без рамки */
+  padding: 5px 10px; /* Внутрішній відступ */
+  border-radius: 4px; /* Заокруглені кути */
+  cursor: pointer; /* Курсор при наведенні */
+}
+
+.sign-out-button:hover {
+  background-color: darkred; /* Темніший червоний колір при наведенні */
+}
+
+
