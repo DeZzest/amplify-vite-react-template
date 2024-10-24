@@ -1,29 +1,91 @@
+.app {
+  border-radius: 8px; /* Округлення кутів контейнера */
+  display: flex; /* Використовує flex для вирівнювання дочірніх елементів */
+  justify-content: center; /* Центрує дочірні елементи по горизонталі */
+  align-items: center; /* Центрує дочірні елементи по вертикалі */
+  height: 100vh; /* Встановлює висоту контейнера на 100% висоти вікна */
+  max-height: 600px; /* Максимальна висота контейнера, щоб обмежити його */
+  background-color: #eef1f5; /* Легкий фон */
+  padding: 0; /* Відсутність відступів всередині контейнера */
+}
+
 .chat-container {
-  position: relative; /* Додаємо позицію */
-  width: 100%; /* Ширина контейнера */
-  height: 50vh; /* Висота контейнера */
-  padding: 20px;
-  box-sizing: border-box;
-  background-color: #f0f0f0; /* Задній фон контейнера */
+  background-color: #ffffff; /* Білий фон для контейнера чату */
+  border-radius: 8px; /* Округлення кутів контейнера */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Легка тінь для підняття вигляду */
+  width: 100%; /* Ширина контейнера на 100% */
+  max-width: 500px; /* Максимальна ширина контейнера */
+  display: flex; /* Використовує flex для вирівнювання дочірніх елементів */
+  flex-direction: column; /* Розміщення дочірніх елементів у стовпчик */
 }
 
 .chat-header {
-  display: flex;
-  justify-content: space-between; /* Розміщуємо елементи по краях */
-  align-items: center;
-  margin-bottom: 10px;
+  background-color: #6f848a; /* Темно-зелений фон заголовка чату */
+  color: white; /* Білий колір тексту заголовка */
+  padding: 10px; /* Відступи всередині заголовка */
+  border-top-left-radius: 8px; /* Округлення верхнього лівого кута */
+  border-top-right-radius: 8px; /* Округлення верхнього правого кута */
+  display: flex; /* Використовує flex для вирівнювання дочірніх елементів заголовка */
+  justify-content: space-between; /* Розміщення дочірніх елементів по краях */
+  align-items: center; /* Центрування дочірніх елементів по вертикалі */
 }
 
 .chat-title {
-  font-size: 20px; /* Розмір шрифту заголовка */
+  margin: 0; /* Відсутність відступів для заголовка */
+  font-size: 1.2em; /* Збільшений шрифт для заголовка */
+  font-style:italic;
 }
 
 .sign-out-button {
-  background-color: #f44336; /* Червоний колір для кнопки виходу */
-  color: white; /* Білий текст на кнопці */
-  border: none; /* Без рамки */
-  padding: 8px 10px; /* Внутрішні відступи */
-  cursor: pointer; /* Курсор при наведенні */
-  border-radius: 5px; /* Заокруглення кутів */
-  margin-left: 10px;
+  background-color: transparent; /* Прозорий фон для кнопки виходу */
+  color: white; /* Білий колір тексту кнопки */
+  border: none; /* Без рамки для кнопки */
+  cursor: pointer; /* Вказівник, що показує, що кнопку можна натиснути */
+  font-size: 13px; /* Розмір шрифту для кнопки */
+}
+
+.sign-out-button:hover {
+  text-decoration: underline; /* Підкреслення тексту при наведенні */
+}
+
+.tabs {
+  display: flex; /* Використовує flex для вирівнювання вкладок */
+  flex-direction: column; /* Розміщення вкладок у стовпчик */
+  margin-right: 20px; /* Відступ справа для вкладок */
+}
+
+.tab {
+  padding: 16px; /* Відступи всередині вкладки */
+  background-color: #3f72b5; /* Легкий фон для вкладок */
+  border: none; /* Без рамки для вкладок */
+  border-radius: none; /* Округлення кутів вкладки */
+  margin: 2px 0; /* Відступи зверху і знизу вкладки */
+  cursor: pointer; /* Вказівник, що показує, що вкладка клікабельна */
+  transition: background-color 0.3s; /* Анімація переходу кольору фону */
+}
+
+.tab.active {
+  background-color: #3b9dff; /* Колір фону для активної вкладки */
+  color: white; /* Білий колір тексту для активної вкладки */
+}
+
+.tab:hover {
+  background-color: #53a9ff; /* Зміна фону вкладки при наведенні курсора */
+}
+
+.chat-content {
+  flex-grow: 1; /* Дозволяє контенту займати весь доступний простір */
+  display: flex; /* Використовує flex для вирівнювання дочірніх елементів */
+}
+
+.saved-message {
+  background-color: #e9ecef; /* Легкий фон для збережених повідомлень */
+  padding: 10px; /* Відступи всередині збереженого повідомлення */
+  border-radius: none; /* Округлення кутів збереженого повідомлення */
+  margin-bottom: 10px; /* Відступ знизу між збереженими повідомленнями */
+}
+
+.chat-body {
+  display: flex; /* Використовує flex для вирівнювання елементів тіла чату */
+  height: 100%; /* Висота тіла чату на 100% */
 }
