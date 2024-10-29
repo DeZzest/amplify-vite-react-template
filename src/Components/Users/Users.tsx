@@ -33,7 +33,6 @@ const Users: React.FC<{ onUserSelect: (userId: string) => void }> = ({
 
 	useEffect(() => {
 		const subscription = client.models.User.observeQuery({
-			authMode: 'apiKey',
 		}).subscribe({
 			next(value) {
 				const userList = value.items

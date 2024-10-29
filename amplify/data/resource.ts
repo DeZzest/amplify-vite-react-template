@@ -10,7 +10,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.publicApiKey().to(['read']),
+      allow.authenticated(),
       allow.owner(),
     ]),
     
@@ -24,7 +24,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.publicApiKey().to(['read']),
+      allow.authenticated(),
       allow.owner(),
     ]),
 
@@ -36,7 +36,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.publicApiKey().to(['read']),
+      allow.authenticated(),
       allow.owner(),
     ]),
 
@@ -49,7 +49,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.publicApiKey().to(['read']),
+      allow.authenticated(),
       allow.owner(),
     ]),
 
@@ -64,7 +64,7 @@ const schema = a.schema({
     })
     .authorization((allow) => [
       //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.publicApiKey().to(['read']),
+      allow.authenticated(),
       allow.owner(),
     ]),
 });

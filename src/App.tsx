@@ -51,7 +51,6 @@ function App() {
 				{
 					id: store.currentUser.id + userId,
 				},
-				{ authMode: 'apiKey' }
 			);
 			if (ChatParticipant?.chatId) {
 				// Якщо чат існує, завантажуємо його
@@ -59,7 +58,6 @@ function App() {
 					{
 						id: ChatParticipant.chatId,
 					},
-					{ authMode: 'apiKey' }
 				);
 				setCurrentChat(chat!);
 			} else {
