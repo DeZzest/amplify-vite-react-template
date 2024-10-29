@@ -3,16 +3,16 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 const schema = a.schema({
   User: a
     .model({
+      name: a.string(),
       email: a.string(),
       messages: a.hasMany('Message', 'userId'),
       savedMessages: a.hasMany('SavedMessage', 'userId'),
       chatParticipants: a.hasMany('ChatParticipant', 'userId'),
     })
     .authorization((allow) => [
-      allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.owner().to(['read', 'create', 'update', 'delete']),
-      //allow.publicApiKey().to(['read']),
-      //allow.owner(),
+      //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
+      allow.publicApiKey().to(['read']),
+      allow.owner(),
     ]),
     
   Message: a
@@ -24,10 +24,9 @@ const schema = a.schema({
       chat: a.belongsTo('Chat', 'chatId'),
     })
     .authorization((allow) => [
-      allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.owner().to(['read', 'create', 'update', 'delete']),
-      //allow.publicApiKey().to(['read']),
-      //allow.owner(),
+      //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
+      allow.publicApiKey().to(['read']),
+      allow.owner(),
     ]),
 
   Chat: a
@@ -37,10 +36,9 @@ const schema = a.schema({
       chatParticipants: a.hasMany('ChatParticipant', 'chatId'),
     })
     .authorization((allow) => [
-      allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.owner().to(['read', 'create', 'update', 'delete']),
-      //allow.publicApiKey().to(['read']),
-      //allow.owner(),
+      //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
+      allow.publicApiKey().to(['read']),
+      allow.owner(),
     ]),
 
   ChatParticipant: a
@@ -51,10 +49,9 @@ const schema = a.schema({
       chat: a.belongsTo('Chat', 'chatId'),
     })
     .authorization((allow) => [
-      allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.owner().to(['read', 'create', 'update', 'delete']),
-      //allow.publicApiKey().to(['read']),
-      //allow.owner(),
+      //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
+      allow.publicApiKey().to(['read']),
+      allow.owner(),
     ]),
 
   SavedMessage: a
@@ -67,10 +64,9 @@ const schema = a.schema({
       isSaved: a.boolean(),
     })
     .authorization((allow) => [
-      allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-      allow.owner().to(['read', 'create', 'update', 'delete']),
-      //allow.publicApiKey().to(['read']),
-      //allow.owner(),
+      //allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
+      allow.publicApiKey().to(['read']),
+      allow.owner(),
     ]),
 });
 
@@ -85,5 +81,3 @@ export const data = defineData({
     },
   },
 });
-
-

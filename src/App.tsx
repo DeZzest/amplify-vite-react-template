@@ -1,23 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import type { Schema } from '../amplify/data/resource';
 import { generateClient } from 'aws-amplify/data';
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import { Chat } from './Components/Chat';
-import Tabs from './Components/Tabs';
-import SavedMessages from './Components/SavedMessages';
-import NavigationBar from './Components/NavigationBar';
+import { Chat } from './Components/Chat/Chat';
+import Tabs from './Components/Tabs/Tabs';
+import SavedMessages from './Components/SavedMessages/SavedMessages';
+import NavigationBar from './Components/NavigationBar/NavigationBar';
 import './App.css';
+import Users from './Components/Users/Users';
+import { StoreContext } from './Context'; // new
 
 const client = generateClient<Schema>();
 
+interface Message {
+  id: string;
+  content: string;
+  userId: string;
+  createdAt: string;
+}
+
+interface SavedMessage {
+  content: string;
+  userId: string;
+  id: string;
+}
+
 function App() {
   const { user, signOut } = useAuthenticator();
-  const [messages, setMessages] = useState<Array<{ id: string; content: string; userId: string; createdAt: string }>>([]);
-  const [savedMessages, setSavedMessages] = useState<Array<{ content: string; userId: string; id: string }>>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [savedMessages, setSavedMessages] = useState<SavedMessage[]>([]);
   const [activeTab, setActiveTab] = useState<string>('chat');
-
   const [isLoadingMessages, setIsLoadingMessages] = useState<boolean>(true);
   const [isLoadingSavedMessages, setIsLoadingSavedMessages] = useState<boolean>(true);
+
+	const store = useContext(StoreContext);// new
+	const [currentChat, setCurrentChat] = useState<Schema['Chat']['type']>();// new
 
   useEffect(() => {
     if (user) {
@@ -36,7 +53,7 @@ function App() {
 
   useEffect(() => {
     setIsLoadingMessages(true);
-    const msgSub = client.models.Message.observeQuery().subscribe({
+    const msgSub = client.models.Message.observeQuery({ authMode: 'apiKey' }).subscribe({
       next: (data) => {
         const formattedMessages = data.items.map(item => ({
           id: item.id || '',
@@ -127,16 +144,6 @@ function App() {
     }
   }
 
-  function replyToMessage(messageId: string) {
-    console.log("Replying to message:", messageId);
-    // Implement the reply functionality here
-  }
-
-  function attachMessage(messageId: string) {
-    console.log("Attaching message:", messageId);
-    // Implement the attach functionality here
-  }
-
   function createSavedMsg(content: string) {
     if (user) {
       client.models.SavedMessage.create({
@@ -148,7 +155,7 @@ function App() {
           { 
             content, 
             userId: user.signInDetails?.loginId || 'Unknown User', 
-            id: (new Date()).toISOString() // або унікальний id
+            id: (new Date()).toISOString() // or unique ID
           }
         ]);
       }).catch((error: Error) => {
@@ -175,22 +182,94 @@ function App() {
     });
   }
 
-  function replyToSavedMsg(messageId: string) {
-    console.log("Replying to saved message:", messageId);
-    // Implement reply functionality here
-  }
+  const getChat = async (userId: string) => {
+    if (!store?.currentUser) {
+        console.error("No current user found.");
+        return;
+    }
 
-  function attachSavedMsg(messageId: string) {
-    console.log("Attaching saved message:", messageId);
-    // Implement attach functionality here
+    try {
+			// Отримуємо ChatParticipant або створюємо новий
+			const { data: ChatParticipant } = await client.models.ChatParticipant.get(
+        {
+            id: store.currentUser.id + userId,
+        },
+        { authMode: 'apiKey' }
+    );
+			if (ChatParticipant?.chatId) {
+				// Якщо чат існує, завантажуємо його
+				const { data: chat } = await client.models.Chat.get(
+					{
+						id: ChatParticipant.chatId,
+					},
+					{ authMode: 'apiKey' }
+				);
+				setCurrentChat(chat!);
+			} else {
+				// Інакше створюємо новий чат
+				const { data: newChat } = await client.models.Chat.create({});
+				await client.models.ChatParticipant.create({
+					chatId: newChat!.id,
+					userId: store!.currentUser!.id,
+					id: userId + store!.currentUser?.id,
+				});
+				await client.models.ChatParticipant.create({
+					chatId: newChat!.id,
+					userId: userId,
+					id: store!.currentUser?.id + userId,
+				});
+				setCurrentChat(newChat!);
+			}
+		} catch (error) {
+      console.error("Error fetching or creating chat:", error);
   }
+};
+
+useEffect(() => {
+  const getUser = async () => {
+    console.log("error");
+    if (user && store) { // Перевіряємо, чи store визначений
+      if (!store.currentUser) {
+        try {
+          const { data } = await client.models.User.get({ id: user.userId });
+          if (data) {
+            store.setCurrentUser(data);
+          } else {
+            const { data: newUser } = await client.models.User.create(
+              {
+                id: user.userId,
+                email: user.signInDetails?.loginId || '',
+              },
+              { authMode: 'userPool' }
+            );
+            store.setCurrentUser(newUser!);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } else {
+      console.error("Store or user is not defined.");
+    }
+  };
+
+  getUser();
+}, [user, store]);
+
 
   return (
     <main className="app">
       <NavigationBar userProfile={{ name: user?.signInDetails?.loginId || 'Guest', email: user?.signInDetails?.loginId ? user.signInDetails.loginId : '' }} onSignOut={signOut} />
-
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {currentChat ? (
+        <p>Chat ID: {currentChat.id}</p>
+      ) : (
+        <p>No active chat. Select a chat to start messaging.</p>
+      )}
+    </div>
       <div className="chat-container">
         <div className="chat-body">
+          <Users onUserSelect={(userId) => getChat(userId)} />
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
           
           {activeTab === 'chat' && (
@@ -205,8 +284,6 @@ function App() {
                 saveMessage={saveMessage} 
                 deleteMessage={deleteMessage} 
                 updateMessage={updateMessage}
-                replyToMessage={replyToMessage}
-                attachMessage={attachMessage}  
               />
             )
           )}
@@ -216,12 +293,10 @@ function App() {
               <div>Loading saved messages...</div>
             ) : (
               <SavedMessages 
-                savedMessages={savedMessages} 
-                createSavedMsg={createSavedMsg}
+                savedMessages={savedMessages}
                 deleteSavedMsg={deleteSavedMsg}
                 updateSavedMsg={updateSavedMsg}
-                replyToSavedMsg={replyToSavedMsg}
-                attachSavedMsg={attachSavedMsg}
+                createSavedMsg={createSavedMsg} 
               />
             )
           )}
@@ -230,5 +305,4 @@ function App() {
     </main>
   );
 }
-
 export default App;
