@@ -5,9 +5,9 @@ import { useAuthenticator } from '@aws-amplify/ui-react';
 import Tabs from './Components/Tabs/Tabs';
 import NavigationBar from './Components/NavigationBar/NavigationBar';
 import './App.css';
-import Users from './Components/Users/Users';
-import { StoreContext } from './Context'; // new
-import { Chats } from './Components/Chats/Chats'
+import { StoreContext } from './Context';
+import { Sidebar } from './Components/Sidebar/Sidebar';
+import { ChatRoom } from './Components/ChatRoom/ChatRoom';
 
 const client = generateClient<Schema>();
 
@@ -37,7 +37,7 @@ function App() {
 		};
 
 		getUser();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user]);
 
 	const getChat = async (userId: string) => {
@@ -51,15 +51,13 @@ function App() {
 			const { data: ChatParticipant } = await client.models.ChatParticipant.get(
 				{
 					id: store.currentUser.id + userId,
-				},
+				}
 			);
 			if (ChatParticipant?.chatId) {
 				// Якщо чат існує, завантажуємо його
-				const { data: chat } = await client.models.Chat.get(
-					{
-						id: ChatParticipant.chatId,
-					},
-				);
+				const { data: chat } = await client.models.Chat.get({
+					id: ChatParticipant.chatId,
+				});
 				setCurrentChat(chat!);
 			} else {
 				// Інакше створюємо новий чат
@@ -90,28 +88,11 @@ function App() {
 				}}
 				onSignOut={signOut}
 			/>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-				}}
-			>
-				{currentChat ? (
-					<p>Chat ID: {currentChat.id}</p>
-				) : (
-					<p>No active chat. Select a chat to start messaging.</p>
-				)}
+			<div className="content">
+				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
+				<ChatRoom />
 			</div>
-			<div className="chat-container">
-				<div className="chat-body">
-					{activeTab === 'user' && (
-						<Users onUserSelect={(userId) => getChat(userId)} />
-					)}
-					{store?.currentUser?.id && <Chats/>}
-					<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-				</div>
-			</div>
+			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 		</main>
 	);
 }
