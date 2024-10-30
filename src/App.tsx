@@ -40,7 +40,7 @@ function App() {
 		};
 
 		getUser();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user]);
 
 	const getChat = async (userId: string) => {
@@ -48,7 +48,6 @@ function App() {
 			console.error('No current user found.');
 			return;
 		}
-
 		try {
 			const { data: ChatParticipant } = await client.models.ChatParticipant.get(
 				{
