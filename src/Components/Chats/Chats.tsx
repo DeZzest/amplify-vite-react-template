@@ -40,4 +40,3 @@ export const Chats: React.FC<ChatProps> = () => {
 			))}
 		</div>
 	);
-};
