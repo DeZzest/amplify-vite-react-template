@@ -57,8 +57,11 @@ export const ChatRoom: React.FC<Props> = ({ currentChat }) => {
 			<div className="messages">
 				{messages.map((item) => (
 					<Message
-						createdAt={item.createdAt}
-						content={item.content}
+						msgData={{
+							content: item.content,
+							createdAt: item.createdAt,
+							id: item.id,
+						}}
 						variant={
 							item.userId === store?.currentUser?.id ? 'owner' : 'friend'
 						}

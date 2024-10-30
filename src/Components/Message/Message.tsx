@@ -1,22 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Message.css';
 import { getTime } from '../../helpers/getTime';
+import ContextMenu from '../ContextMenu/ContextMenu';
+import { generateClient } from 'aws-amplify/api';
+import { Schema } from '../../../amplify/data/resource';
+
+const client = generateClient<Schema>();
 
 interface MessageProps {
 	variant: 'owner' | 'friend';
-	content: string;
-	createdAt: string;
+
+	msgData: { content: string; createdAt: string; id: string };
 }
 
-const Message: React.FC<MessageProps> = ({ variant, content, createdAt }) => {
+const Message: React.FC<MessageProps> = ({ variant, msgData }) => {
 	const isOwner = variant === 'owner';
+	const [position, setPosition] = useState({ x: 0, y: 0 });
+	const [show, setShow] = useState(false);
+
+	const deleteMsg = async () => {
+		await client.models.Message.delete({ id: msgData.id });
+	};
 
 	return (
-		<div className={`message ${isOwner ? 'message-owner' : 'message-friend'}`}>
-			<div className="message-content">
-				<p>{content}</p>
-				<span className="message-time">{getTime(createdAt)}</span>
+		<div>
+			<div
+				className={`message ${isOwner ? 'message-owner' : 'message-friend'}`}
+			>
+				<div
+					onContextMenu={(e) => {
+						e.preventDefault();
+						setPosition({ x: e.clientX, y: e.clientY });
+						setShow(true);
+					}}
+					className="message-content"
+				>
+					<p>{msgData.content}</p>
+					<span className="message-time">{getTime(msgData.createdAt)}</span>
+				</div>
 			</div>
+
+			{isOwner ? (
+				<ContextMenu
+					position={position}
+					setShow={(value) => setShow(value)}
+					show={show}
+					save={() => {
+						navigator.clipboard.writeText(msgData.content).catch((err) => {
+							console.error('Error copying text: ', err);
+						});
+					}}
+					deleteMsg={deleteMsg}
+				/>
+			) : (
+				<ContextMenu
+					position={position}
+					setShow={(value) => setShow(value)}
+					show={show}
+					save={() => {
+						navigator.clipboard.writeText(msgData.content).catch((err) => {
+							console.error('Error copying text: ', err);
+						});
+					}}
+				/>
+			)}
 		</div>
 	);
 };
