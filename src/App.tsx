@@ -7,6 +7,7 @@ import NavigationBar from './Components/NavigationBar/NavigationBar';
 import './App.css';
 import Users from './Components/Users/Users';
 import { StoreContext } from './Context'; // new
+import { Chats } from './Components/Chats/Chats'
 
 const client = generateClient<Schema>();
 
@@ -107,6 +108,7 @@ function App() {
 					{activeTab === 'user' && (
 						<Users onUserSelect={(userId) => getChat(userId)} />
 					)}
+					{store?.currentUser?.id && <Chats/>}
 					<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 				</div>
 			</div>
