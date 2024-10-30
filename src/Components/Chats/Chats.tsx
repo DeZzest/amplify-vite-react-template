@@ -6,9 +6,11 @@ import { StoreContext } from '../../Context';
 
 const client = generateClient<Schema>();
 
-interface ChatProps {}
+interface ChatProps {
+	onUserSelect: (userId: string) => void;
+}
 
-export const Chats: React.FC<ChatProps> = () => {
+export const Chats: React.FC<ChatProps> = ({onUserSelect}) => {
 	const [chats, setChats] = useState<{ id: string; email: string }[]>([]);
 	const store = useContext(StoreContext);
 
@@ -36,7 +38,7 @@ export const Chats: React.FC<ChatProps> = () => {
 	return (
 		<div className="chat-container">
 			{chats.map((item) => (
-				<li>{item.email}</li>
+				<li onClick={() => onUserSelect(item.id)}>{item.email}</li>
 			))}
 		</div>
 	);

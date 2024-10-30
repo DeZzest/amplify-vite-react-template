@@ -52,7 +52,6 @@ const Users: React.FC<{ onUserSelect: (userId: string) => void }> = ({
 
 	return (
 		<div className="users-container">
-			<h3>Users</h3>
 			{isLoading ? (
 				<p>Loading users...</p>
 			) : (

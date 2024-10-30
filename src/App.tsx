@@ -15,8 +15,11 @@ function App() {
 	const { user, signOut } = useAuthenticator();
 	const [activeTab, setActiveTab] = useState<string>('chat');
 
-	const store = useContext(StoreContext); // new
-	const [currentChat, setCurrentChat] = useState<Schema['Chat']['type']>(); // new
+	const store = useContext(StoreContext);
+	const [currentChat, setCurrentChat] = useState<{
+		chatId: string;
+		email: string;
+	}>();
 
 	useEffect(() => {
 		const getUser = async () => {
@@ -29,7 +32,7 @@ function App() {
 				} else {
 					const { data: newUser } = await client.models.User.create({
 						id: user.userId,
-						email: user.signInDetails?.loginId,
+						email: user!.signInDetails!.loginId!,
 					});
 					store!.setCurrentUser(newUser!);
 				}
@@ -47,32 +50,45 @@ function App() {
 		}
 
 		try {
-			// Отримуємо ChatParticipant або створюємо новий
 			const { data: ChatParticipant } = await client.models.ChatParticipant.get(
 				{
 					id: store.currentUser.id + userId,
 				}
 			);
 			if (ChatParticipant?.chatId) {
-				// Якщо чат існує, завантажуємо його
-				const { data: chat } = await client.models.Chat.get({
-					id: ChatParticipant.chatId,
-				});
-				setCurrentChat(chat!);
+				const { data: chat } = await client.models.Chat.get(
+					{
+						id: ChatParticipant.chatId,
+					},
+					{
+						selectionSet: [
+							'id',
+							'chatParticipants.user.email',
+							'chatParticipants.user.id',
+						],
+					}
+				);
+				const userEmail = chat?.chatParticipants.filter(
+					(item) => item.user.id !== store.currentUser?.id
+				);
+
+				setCurrentChat({ chatId: chat!.id!, email: userEmail![0].user.email });
 			} else {
-				// Інакше створюємо новий чат
 				const { data: newChat } = await client.models.Chat.create({});
 				await client.models.ChatParticipant.create({
 					chatId: newChat!.id,
 					userId: store!.currentUser!.id,
 					id: userId + store!.currentUser?.id,
 				});
-				await client.models.ChatParticipant.create({
-					chatId: newChat!.id,
-					userId: userId,
-					id: store!.currentUser?.id + userId,
-				});
-				setCurrentChat(newChat!);
+				const { data } = await client.models.ChatParticipant.create(
+					{
+						chatId: newChat!.id,
+						userId: userId,
+						id: store!.currentUser?.id + userId,
+					},
+					{ selectionSet: ['user.email'] }
+				);
+				setCurrentChat({ chatId: newChat!.id!, email: data!.user!.email! });
 			}
 		} catch (error) {
 			console.error('Error fetching or creating chat:', error);
@@ -90,7 +106,7 @@ function App() {
 			/>
 			<div className="content">
 				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
-				{currentChat && <ChatRoom />}
+				{currentChat && <ChatRoom currentChat={currentChat} />}
 			</div>
 			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 		</main>
