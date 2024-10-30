@@ -27,23 +27,4 @@
     margin-left: 1rem;
   }
   
-  .tabs-container {
-    display: flex;
-    flex-wrap: wrap; /* Дозволяє вкладкам переноситися на наступний рядок */
-    justify-content: flex-start; /* Вирівнювання вкладок по лівому краю */
-    width: 100%; /* Ширина, яка адаптується під ширину елементів */
-  }
-  
-  .tab {
-    padding: 0.5rem 1rem;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 0.5rem;
-    cursor: pointer;
-  }
-  
-  .tab:hover {
-    background-color: #f1f1f1;
-  }
   

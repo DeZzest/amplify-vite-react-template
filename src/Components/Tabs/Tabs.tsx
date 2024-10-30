@@ -1,4 +1,5 @@
 import React from 'react';
+import './Tabs.css';
 
 interface TabsProps {
 	activeTab: string;

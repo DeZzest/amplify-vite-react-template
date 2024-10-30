@@ -1,25 +1,21 @@
 import React from 'react';
-import { Schema } from '../../../amplify/data/resource';
 import './Message.css';
 
 interface MessageProps {
-  msgData: Schema['Message']['type'];
-  variant: 'owner' | 'friend';
+	variant: 'owner' | 'friend';
 }
 
-const Message: React.FC<MessageProps> = ({ msgData, variant }) => {
-  const isOwner = variant === 'owner';
+const Message: React.FC<MessageProps> = ({ variant }) => {
+	const isOwner = variant === 'owner';
 
-  return (
-    <div className={`message ${isOwner ? 'message-owner' : 'message-friend'}`}>
-      <div className="message-content">
-        <p>{msgData.content}</p>
-        <span className="message-time">
-          {new Date(msgData.createdAt).toLocaleTimeString()}
-        </span>
-      </div>
-    </div>
-  );
+	return (
+		<div className={`message ${isOwner ? 'message-owner' : 'message-friend'}`}>
+			<div className="message-content">
+				<p>Message text</p>
+				<span className="message-time">13:43</span>
+			</div>
+		</div>
+	);
 };
 
 export default Message;
