@@ -90,7 +90,7 @@ function App() {
 			/>
 			<div className="content">
 				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
-				<ChatRoom />
+				{currentChat && <ChatRoom />}
 			</div>
 			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 		</main>

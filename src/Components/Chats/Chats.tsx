@@ -32,7 +32,7 @@ export const Chats: React.FC<ChatProps> = () => {
 		});
 
 		return () => sub.unsubscribe();
-	}, []);
+	}, [store]);
 	return (
 		<div className="chat-container">
 			{chats.map((item) => (
@@ -40,3 +40,4 @@ export const Chats: React.FC<ChatProps> = () => {
 			))}
 		</div>
 	);
+};
