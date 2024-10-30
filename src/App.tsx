@@ -15,8 +15,8 @@ function App() {
 	const { user, signOut } = useAuthenticator();
 	const [activeTab, setActiveTab] = useState<string>('chat');
 
-	const store = useContext(StoreContext); // new
-	const [currentChat, setCurrentChat] = useState<Schema['Chat']['type']>(); // new
+	const store = useContext(StoreContext);
+	const [currentChat, setCurrentChat] = useState<Schema['Chat']['type']>();
 
 	useEffect(() => {
 		const getUser = async () => {
@@ -37,7 +37,6 @@ function App() {
 		};
 
 		getUser();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user]);
 
 	const getChat = async (userId: string) => {
@@ -45,22 +44,18 @@ function App() {
 			console.error('No current user found.');
 			return;
 		}
-
 		try {
-			// Отримуємо ChatParticipant або створюємо новий
 			const { data: ChatParticipant } = await client.models.ChatParticipant.get(
 				{
 					id: store.currentUser.id + userId,
 				}
 			);
 			if (ChatParticipant?.chatId) {
-				// Якщо чат існує, завантажуємо його
 				const { data: chat } = await client.models.Chat.get({
 					id: ChatParticipant.chatId,
 				});
 				setCurrentChat(chat!);
 			} else {
-				// Інакше створюємо новий чат
 				const { data: newChat } = await client.models.Chat.create({});
 				await client.models.ChatParticipant.create({
 					chatId: newChat!.id,
