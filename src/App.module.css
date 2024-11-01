@@ -1,0 +1,9 @@
+.app {
+  height: 800px; /* Встановлює висоту контейнера на 100% висоти вікна */
+  width: 800px;
+}
+
+.content{
+  display: flex;
+  height: 690px;
+}

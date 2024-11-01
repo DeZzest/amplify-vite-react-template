@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import './MessageForm.css';
+import style from './MessageForm.module.css';
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
 import { StoreContext } from '../../Context';
@@ -28,15 +28,15 @@ const MessageForm: React.FC<MessageFormProps> = ({ chatId }) => {
 	};
 
 	return (
-		<form className="message-form" onSubmit={(e) => e.preventDefault()}>
+		<form className={style.form} onSubmit={(e) => e.preventDefault()}>
 			<input
 				type="text"
-				className="message-input"
+				className={style.input}
 				placeholder="Type your message..."
 				value={message}
 				onChange={(e) => setMessage(e.target.value)}
 			/>
-			<button className="send-button" onClick={createMsg}>
+			<button className={style.btn} onClick={createMsg}>
 				Send
 			</button>
 		</form>

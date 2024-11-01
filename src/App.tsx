@@ -4,10 +4,11 @@ import { generateClient } from 'aws-amplify/data';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import Tabs from './Components/Tabs/Tabs';
 import NavigationBar from './Components/NavigationBar/NavigationBar';
-import './App.css';
+import style from './App.module.css';
 import { StoreContext } from './Context';
 import { Sidebar } from './Components/Sidebar/Sidebar';
 import { ChatRoom } from './Components/ChatRoom/ChatRoom';
+import { ChatRoomHolder } from './Components/ChatRoomHolder/ChatRoomHolder';
 
 const client = generateClient<Schema>();
 
@@ -95,7 +96,7 @@ function App() {
 	};
 
 	return (
-		<main className="app">
+		<main className={style.app}>
 			<NavigationBar
 				userProfile={{
 					name: user?.signInDetails?.loginId || 'Guest',
@@ -103,9 +104,13 @@ function App() {
 				}}
 				onSignOut={signOut}
 			/>
-			<div className="content">
+			<div className={style.content}>
 				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
-				{currentChat && <ChatRoom currentChat={currentChat} />}
+				{currentChat ? (
+					<ChatRoom currentChat={currentChat} />
+				) : (
+					<ChatRoomHolder />
+				)}
 			</div>
 			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 		</main>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Message.css';
+import style from './Message.module.css';
 import { getTime } from '../../helpers/getTime';
 import ContextMenu from '../ContextMenu/ContextMenu';
 import { generateClient } from 'aws-amplify/api';
@@ -25,7 +25,7 @@ const Message: React.FC<MessageProps> = ({ variant, msgData }) => {
 	return (
 		<div>
 			<div
-				className={`message ${isOwner ? 'message-owner' : 'message-friend'}`}
+				className={`${style.message} ${isOwner ? style.owner : style.friend}`}
 			>
 				<div
 					onContextMenu={(e) => {
@@ -33,10 +33,10 @@ const Message: React.FC<MessageProps> = ({ variant, msgData }) => {
 						setPosition({ x: e.clientX, y: e.clientY });
 						setShow(true);
 					}}
-					className="message-content"
+					className={style.content}
 				>
 					<p>{msgData.content}</p>
-					<span className="message-time">{getTime(msgData.createdAt)}</span>
+					<span className={style.time}>{getTime(msgData.createdAt)}</span>
 				</div>
 			</div>
 

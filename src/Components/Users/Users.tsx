@@ -3,23 +3,9 @@ import { generateClient } from 'aws-amplify/data';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { Schema } from '../../../amplify/data/resource';
 import { StoreContext } from '../../Context';
-import './Users.css';
+import style from './Users.module.css';
 
 const client = generateClient<Schema>();
-
-interface UserProps {
-	name?: string;
-}
-
-const User: React.FC<UserProps> = ({ name }) => {
-	return (
-		<div className="user">
-			<div className="contentWrapper">
-				<div className="name">{name}</div>
-			</div>
-		</div>
-	);
-};
 
 const Users: React.FC<{ onUserSelect: (userId: string) => void }> = ({
 	onUserSelect,
@@ -32,8 +18,7 @@ const Users: React.FC<{ onUserSelect: (userId: string) => void }> = ({
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		const subscription = client.models.User.observeQuery({
-		}).subscribe({
+		const subscription = client.models.User.observeQuery({}).subscribe({
 			next(value) {
 				const userList = value.items
 					.filter((u) => u.id !== user.username) // Виключаємо поточного користувача
@@ -51,19 +36,19 @@ const Users: React.FC<{ onUserSelect: (userId: string) => void }> = ({
 	}, [user, store]);
 
 	return (
-		<div className="users-container">
+		<div>
 			{isLoading ? (
 				<p>Loading users...</p>
 			) : (
-				<ul className="user-list">
+				<ul>
 					{users.length > 0 ? (
 						users.map((user) => (
 							<li
 								key={user.id}
-								className="user-item"
+								className={style.user}
 								onClick={() => onUserSelect(user.id)}
 							>
-								<User name={user.email || 'No Email'} />
+								{user.email}
 							</li>
 						))
 					) : (

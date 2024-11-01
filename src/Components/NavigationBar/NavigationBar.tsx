@@ -1,30 +1,32 @@
 import React from 'react';
-import './NavigationBar.css';
+import style from './NavigationBar.module.css';
 
 interface NavigationBarProps {
-  userProfile: { name: string; email: string } | null;
-  onSignOut: () => void;
+	userProfile: { name: string; email: string } | null;
+	onSignOut: () => void;
 }
 
-const NavigationBar: React.FC<NavigationBarProps> = ({ userProfile, onSignOut }) => {
-    return (
-      <nav className="navigation-bar">
-        <div className="nav-brand">My Chat App</div>
-        <div className="nav-user-profile">
-          {userProfile ? (
-            <>
-              <span className="user-name">{userProfile.name}</span>
-              <button className="sign-out-button" onClick={onSignOut}>
-                Sign Out
-              </button>
-            </>
-          ) : (
-            <button className="sign-in-button">Sign In</button>
-          )}
-        </div>
-      </nav>
-    );
-  };
-  
+const NavigationBar: React.FC<NavigationBarProps> = ({
+	userProfile,
+	onSignOut,
+}) => {
+	return (
+		<nav className={style.navigation_bar}>
+			<div className={style.title}>My Chat App</div>
+			<div className={style.user}>
+				{userProfile ? (
+					<>
+						<span className={style.name}>{userProfile.name}</span>
+						<button className={style.btn} onClick={onSignOut}>
+							Sign Out
+						</button>
+					</>
+				) : (
+					<button className={style.btn}>Sign In</button>
+				)}
+			</div>
+		</nav>
+	);
+};
 
 export default NavigationBar;

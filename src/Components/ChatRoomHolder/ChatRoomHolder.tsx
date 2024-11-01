@@ -1,9 +1,9 @@
-import './ChatRoomHolder.css';
+import style from './ChatRoomHolder.module.css';
 
 export const ChatRoomHolder = () => {
 	return (
-		<div className={'chat_room_holder'}>
-			<h1 className='chat_room_title'>Select a chat to communicate</h1>
+		<div className={style.room}>
+			<h1 className={style.title}>Select a chat to communicate</h1>
 		</div>
 	);
 };

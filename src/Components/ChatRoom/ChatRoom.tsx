@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import MessageForm from '../MessageForm/MessageForm';
 import Message from '../Message/Message';
-import './ChatRoom.css';
+import style from './ChatRoom.module.css';
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
 import { StoreContext } from '../../Context';
@@ -51,10 +51,10 @@ export const ChatRoom: React.FC<Props> = ({ currentChat }) => {
 	}, [currentChat]);
 
 	return (
-		<div className="chat_room">
-			<h4 className="chat_room_user_name">{currentChat.email}</h4>
+		<div className={style.room}>
+			<h4 className={style.room_name}>{currentChat.email}</h4>
 
-			<div className="messages">
+			<div className={style.messages}>
 				{messages.map((item) => (
 					<Message
 						msgData={{

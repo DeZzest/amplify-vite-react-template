@@ -1,0 +1,17 @@
+.user {
+	padding: 5px 10px;
+	background: rgb(3, 133, 240);
+	margin: 10px 0;
+	border-radius: 5px;
+	border: rgba(255, 0, 0, 0) 3px solid;
+	cursor: pointer;
+	color: white;
+	transition: background 0.1s linear;
+}
+
+.user:hover {
+	background: #fff;
+	border: rgb(3, 133, 240) 3px solid;
+	color: black;
+	transition: background 0.1s linear;
+}
