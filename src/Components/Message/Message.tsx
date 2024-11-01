@@ -9,11 +9,11 @@ const client = generateClient<Schema>();
 
 interface MessageProps {
 	variant: 'owner' | 'friend';
-
 	msgData: { content: string; createdAt: string; id: string };
+	onSaveMessage: (message: string) => void;
 }
 
-const Message: React.FC<MessageProps> = ({ variant, msgData }) => {
+const Message: React.FC<MessageProps> = ({ variant, msgData, onSaveMessage }) => {
 	const isOwner = variant === 'owner';
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 	const [show, setShow] = useState(false);
@@ -51,6 +51,7 @@ const Message: React.FC<MessageProps> = ({ variant, msgData }) => {
 						});
 					}}
 					deleteMsg={deleteMsg}
+					saveMsg={() => onSaveMessage(msgData.content)}
 				/>
 			) : (
 				<ContextMenu
@@ -62,6 +63,7 @@ const Message: React.FC<MessageProps> = ({ variant, msgData }) => {
 							console.error('Error copying text: ', err);
 						});
 					}}
+					saveMsg={() => onSaveMessage(msgData.content)}
 				/>
 			)}
 		</div>
