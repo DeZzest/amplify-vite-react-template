@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import './ContextMenu.css';
+import style from './ContextMenu.module.css';
 
 interface ContextMenuProps {
 	show: boolean;
@@ -31,11 +31,11 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [show]);
+	}, [show, setShow]);
 
 	const handleCopy = (event: React.MouseEvent) => {
 		event.stopPropagation();
-		
+
 		save!();
 		setShow(false);
 	};
@@ -51,18 +51,18 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 			{show && (
 				<div
 					id="context-menu"
-					className="context-menu"
+					className={style.menu}
 					style={{
 						top: position.y,
 						left: position.x,
 						display: show ? 'block' : 'none',
 					}}
 				>
-					<div className="context-menu-item" onClick={handleCopy}>
+					<div className={style.item} onClick={handleCopy}>
 						Copy
 					</div>
 					{deleteMsg && (
-						<div className="context-menu-item" onClick={handleDelete}>
+						<div className={style.item} onClick={handleDelete}>
 							Delete
 						</div>
 					)}

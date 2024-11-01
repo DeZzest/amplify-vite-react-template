@@ -1,5 +1,5 @@
 import React from 'react';
-import './Tabs.css';
+import style from './Tabs.module.css';
 
 interface TabsProps {
 	activeTab: string;
@@ -8,21 +8,21 @@ interface TabsProps {
 
 const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
 	return (
-		<div className="tabs">
+		<div className={style.tabs}>
 			<button
-				className={`tab ${activeTab === 'chat' ? 'active' : ''}`}
+				className={`${style.tab} ${activeTab === 'chat' ? style.active : ''}`}
 				onClick={() => setActiveTab('chat')}
 			>
 				Chats
 			</button>
 			<button
-				className={`tab ${activeTab === 'user' ? 'active' : ''}`}
+				className={`${style.tab} ${activeTab === 'user' ? style.active : ''}`}
 				onClick={() => setActiveTab('user')}
 			>
 				Users
 			</button>
 			<button
-				className={`tab ${activeTab === 'saved' ? 'active' : ''}`}
+				className={`${style.tab} ${activeTab === 'saved' ? style.active : ''}`}
 				onClick={() => setActiveTab('saved')}
 			>
 				Saved Messages

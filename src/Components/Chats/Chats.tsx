@@ -1,8 +1,8 @@
 import { generateClient } from 'aws-amplify/api';
-import './Chats.css';
 import { Schema } from '../../../amplify/data/resource';
 import { useContext, useEffect, useState } from 'react';
 import { StoreContext } from '../../Context';
+import style from './Chats.module.css';
 
 const client = generateClient<Schema>();
 
@@ -10,7 +10,7 @@ interface ChatProps {
 	onUserSelect: (userId: string) => void;
 }
 
-export const Chats: React.FC<ChatProps> = ({onUserSelect}) => {
+export const Chats: React.FC<ChatProps> = ({ onUserSelect }) => {
 	const [chats, setChats] = useState<{ id: string; email: string }[]>([]);
 	const store = useContext(StoreContext);
 
@@ -36,10 +36,16 @@ export const Chats: React.FC<ChatProps> = ({onUserSelect}) => {
 		return () => sub.unsubscribe();
 	}, [store]);
 	return (
-		<div className="chat-container">
-			{chats.map((item) => (
-				<li onClick={() => onUserSelect(item.id)}>{item.email}</li>
-			))}
+		<div>
+			<ul>
+				<li className={style.chat}>GPT Assistant</li>
+
+				{chats.map((item) => (
+					<li className={style.chat} onClick={() => onUserSelect(item.id)}>
+						{item.email}
+					</li>
+				))}
+			</ul>
 		</div>
 	);
 };

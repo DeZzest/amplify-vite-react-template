@@ -1,4 +1,4 @@
-.message-form {
+.form {
     display: flex;
     align-items: center;
     padding: 10px;
@@ -6,7 +6,7 @@
     width: 100%;
   }
   
-  .message-input {
+  .input {
     flex: 1;
     padding: 10px;
     border-radius: 20px;
@@ -14,7 +14,7 @@
     outline: none;
   }
   
-  .send-button {
+  .btn {
     margin-left: 10px;
     padding: 8px 16px;
     border-radius: 20px;
@@ -24,7 +24,7 @@
     cursor: pointer;
   }
   
-  .send-button:hover {
+  .btn:hover {
     background-color: #0056b3;
   }
   

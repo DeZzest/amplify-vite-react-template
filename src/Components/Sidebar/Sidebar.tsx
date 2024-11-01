@@ -1,5 +1,5 @@
 import React from 'react';
-import './Sidebar.css';
+import style from './Sidebar.module.css';
 import Users from '../Users/Users';
 import { Chats } from '../Chats/Chats';
 
@@ -10,7 +10,7 @@ interface Props {
 
 export const Sidebar: React.FC<Props> = ({ activeTab, getChat }) => {
 	return (
-		<div className="sidebar">
+		<div className={style.sidebar}>
 			{activeTab === 'user' && (
 				<Users onUserSelect={(userId) => getChat(userId)} />
 			)}
