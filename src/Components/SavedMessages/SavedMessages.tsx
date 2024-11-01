@@ -1,132 +1,35 @@
-import React, { useState } from 'react';
-import './SavedMessages.css';
+import React, { useEffect, useState } from 'react';
 
 interface SavedMessagesProps {
-  savedMessages: Array<{ content: string; userId: string; id: string }>;
-  createSavedMsg: (value: string) => void;
-  deleteSavedMsg: (id: string) => void;
-  updateSavedMsg: (id: string, newContent: string) => void;
+	currentUser: string;
 }
 
-const SavedMessages: React.FC<SavedMessagesProps> = ({
-  savedMessages,
-  createSavedMsg,
-  deleteSavedMsg,
-  updateSavedMsg,
-}) => {
-  const [newMessage, setNewMessage] = useState<string>('');
-  const [contextMenuMsgId, setContextMenuMsgId] = useState<string | null>(null);
-  const [showContextMenu, setShowContextMenu] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedMessageContent, setEditedMessageContent] = useState('');
+const SavedMessages: React.FC<SavedMessagesProps> = ({ currentUser }) => {
+	const [savedMessages, setSavedMessages] = useState<string[]>([]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMessage(event.target.value);
-  };
+	useEffect(() => {
+		const messages = JSON.parse(localStorage.getItem(`savedMessages_${currentUser}`) || '[]');
+		setSavedMessages(messages);
+	}, [currentUser]);
 
-  const handleSend = () => {
-    if (newMessage.trim() !== '') {
-      createSavedMsg(newMessage);
-      setNewMessage('');
-    }
-  };
+	const handleDeleteMessage = (msg: string) => {
+		const updatedMessages = savedMessages.filter(message => message !== msg);
+		setSavedMessages(updatedMessages);
+		localStorage.setItem(`savedMessages_${currentUser}`, JSON.stringify(updatedMessages));
+	};
 
-  const handleContextMenuOpen = (event: React.MouseEvent, messageId: string, messageContent: string) => {
-    event.preventDefault();
-    setShowContextMenu(true);
-    setContextMenuPosition({ x: event.clientX, y: event.clientY });
-    setContextMenuMsgId(messageId);
-    setEditedMessageContent(messageContent);
-  };
-
-  const handleDeleteSavedMsg = () => {
-    if (contextMenuMsgId) {
-      deleteSavedMsg(contextMenuMsgId);
-    }
-    setShowContextMenu(false);
-    setContextMenuMsgId(null);
-  };
-
-  const handleEditSavedMsg = () => {
-    if (contextMenuMsgId) {
-      updateSavedMsg(contextMenuMsgId, editedMessageContent);
-    }
-    setShowContextMenu(false);
-    setContextMenuMsgId(null);
-    setIsEditing(false);
-  };
-
-  const handleCopySavedMsg = () => {
-    if (contextMenuMsgId) {
-      const messageToCopy = savedMessages.find(msg => msg.id === contextMenuMsgId);
-      if (messageToCopy) {
-        navigator.clipboard.writeText(messageToCopy.content);
-      }
-    }
-    setShowContextMenu(false);
-    setContextMenuMsgId(null);
-  };
-
-  return (
-    <div className="saved-messages">
-      <h2>Saved Messages</h2>
-      <div className="input-container">
-        <input 
-          type="text" 
-          placeholder="Type a message..." 
-          value={newMessage} 
-          onChange={handleInputChange} 
-          className="message-input" 
-        />
-        {newMessage.trim() && (
-          <button className="send-button" onClick={handleSend}>
-            <span>↑</span>
-          </button>
-        )}
-      </div>
-
-      {savedMessages.length === 0 ? (
-        <p className="no-messages">No saved messages.</p>
-      ) : (
-        <ul>
-          {savedMessages.map(msg => (
-            <li 
-              key={msg.id} 
-              onContextMenu={(e) => handleContextMenuOpen(e, msg.id, msg.content)}
-            >
-              <div className="message-content">{msg.content}</div>
-              <div className="message-info">Belongs to: {msg.userId} (Saved)</div>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {showContextMenu && contextMenuPosition && (
-        <div
-          className="context-menu"
-          style={{ position: 'absolute', top: contextMenuPosition.y, left: contextMenuPosition.x }}
-        >
-          <button onClick={handleCopySavedMsg} className="context-menu-button">Copy</button>
-          <button onClick={() => setIsEditing(true)} className="context-menu-button">Edit</button>
-          <button onClick={handleDeleteSavedMsg} className="context-menu-button">Delete</button>
-        </div>
-      )}
-
-      {isEditing && (
-        <div className="editing-container">
-          <input
-            type="text"
-            value={editedMessageContent}
-            onChange={(e) => setEditedMessageContent(e.target.value)}
-            placeholder="Edit saved message..."
-            className="message-input" 
-          />
-          <button onClick={handleEditSavedMsg} className="save-button">Save</button>
-        </div>
-      )}
-    </div>
-  );
+	return (
+		<div>
+			<h2>Saved Messages</h2>
+			<ul>
+				{savedMessages.map((msg, index) => (
+					<li key={index}>
+						{msg} <button onClick={() => handleDeleteMessage(msg)}>Delete</button>
+					</li>
+				))}
+			</ul>
+		</div>
+	);
 };
 
 export default SavedMessages;

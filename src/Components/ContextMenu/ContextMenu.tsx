@@ -7,6 +7,7 @@ interface ContextMenuProps {
 	position: { x: number; y: number };
 	save?: () => void;
 	deleteMsg?: () => void;
+	saveMsg?: () => void
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
@@ -15,6 +16,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 	show,
 	deleteMsg,
 	save,
+	saveMsg,
 }) => {
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -46,6 +48,13 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 		setShow(false);
 	};
 
+	const handleSaveMessage = (event: React.MouseEvent) => {
+		event.stopPropagation();
+		saveMsg!();
+		setShow(false);
+	};
+
+
 	return (
 		<div className="app" style={{ width: '100%', height: '100%' }}>
 			{show && (
@@ -64,6 +73,11 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 					{deleteMsg && (
 						<div className={style.item} onClick={handleDelete}>
 							Delete
+						</div>
+					)}
+					{saveMsg && (
+						<div className="context-menu-item" onClick={handleSaveMessage}>
+							Save
 						</div>
 					)}
 				</div>
