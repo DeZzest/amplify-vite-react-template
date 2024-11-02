@@ -15,6 +15,7 @@ const MessageForm: React.FC<MessageFormProps> = ({ chatId }) => {
 	const store = useContext(StoreContext);
 
 	const createMsg = async () => {
+		setMessage('');
 		try {
 			const { data, errors } = await client.models.Message.create({
 				chatId,
@@ -36,7 +37,10 @@ const MessageForm: React.FC<MessageFormProps> = ({ chatId }) => {
 				value={message}
 				onChange={(e) => setMessage(e.target.value)}
 			/>
-			<button className={style.btn} onClick={createMsg}>
+			<button
+				className={`${style.btn} ${message && style.active}`}
+				onClick={createMsg}
+			>
 				Send
 			</button>
 		</form>
