@@ -38,7 +38,12 @@ export const Chats: React.FC<ChatProps> = ({ onUserSelect }) => {
 	return (
 		<div>
 			<ul>
-				<li className={style.chat}>GPT Assistant</li>
+				<li
+					className={style.chat}
+					onClick={() => store?.setIsChatAssistant(true)}
+				>
+					GPT Assistant
+				</li>
 
 				{chats.map((item) => (
 					<li className={style.chat} onClick={() => onUserSelect(item.id)}>

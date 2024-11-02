@@ -14,7 +14,9 @@ export const Sidebar: React.FC<Props> = ({ activeTab, getChat }) => {
 			{activeTab === 'user' && (
 				<Users onUserSelect={(userId) => getChat(userId)} />
 			)}
-			{activeTab === 'chat' && <Chats onUserSelect={(userId) => getChat(userId)} />}
+			{activeTab === 'chat' && (
+				<Chats onUserSelect={(userId) => getChat(userId)} />
+			)}
 		</div>
 	);
 };

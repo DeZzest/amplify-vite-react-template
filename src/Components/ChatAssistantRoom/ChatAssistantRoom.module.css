@@ -1,0 +1,74 @@
+.room {
+	background: rgb(226, 226, 226);
+	width: 100%;
+	border-left: 3px solid rgb(0, 115, 209);
+}
+
+.messages {
+	height: 535px;
+	overflow-y: scroll;
+	padding: 0 10px;
+	padding: 0px 10px;
+}
+
+.message {
+	width: 100%;
+	display: flex;
+	justify-content: start;
+	margin: 20px 0;
+}
+
+.message.owner {
+	justify-content: end;
+}
+
+.message.owner .content {
+	background-color: #dcf8c6;
+}
+
+.content {
+	background-color: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+}
+
+.room_name {
+	margin: 0 0px 5px 0px;
+	padding: 10px;
+	background-color: rgb(0, 87, 187);
+	color: white;
+	text-align: center;
+}
+
+.form {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	border-top: 1px solid #e0e0e0;
+	width: 100%;
+}
+
+.input {
+	flex: 1;
+	padding: 10px;
+	border-radius: 20px;
+	border: 1px solid #ddd;
+	outline: none;
+}
+
+.btn {
+	margin-left: 10px;
+	padding: 8px 16px;
+	border-radius: 20px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	cursor: pointer;
+	scale: 0;
+	transition: scale 0.1s linear;
+}
+
+.btn.active {
+	scale: 1;
+	transition: scale 0.1s linear;
+}

@@ -13,6 +13,9 @@ interface StoreI {
 
 	selectedUserId: string;
 	setSelectedUserId: React.Dispatch<React.SetStateAction<string>>;
+
+	isChatAssistant: boolean | null;
+	setIsChatAssistant: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const StoreContext = createContext<StoreI | null>(null);
@@ -22,6 +25,7 @@ export const Context: React.FC<Props> = ({ children }) => {
 		null
 	);
 	const [selectedUserId, setSelectedUserId] = useState('');
+	const [isChatAssistant, setIsChatAssistant] = useState<boolean>(false);
 
 	const store: StoreI = {
 		currentUser,
@@ -29,6 +33,9 @@ export const Context: React.FC<Props> = ({ children }) => {
 
 		selectedUserId,
 		setSelectedUserId,
+
+		isChatAssistant,
+		setIsChatAssistant,
 	};
 
 	return (

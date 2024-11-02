@@ -40,7 +40,6 @@ export const ChatRoom: React.FC<Props> = ({ currentChat }) => {
 					userId: item.userId!,
 				}));
 
-				console.log(messages);
 				setMessages(messages);
 			},
 		});
