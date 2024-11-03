@@ -76,7 +76,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 						</div>
 					)}
 					{saveMsg && (
-						<div className="context-menu-item" onClick={handleSaveMessage}>
+						<div className={style.item} onClick={handleSaveMessage}>
 							Save
 						</div>
 					)}

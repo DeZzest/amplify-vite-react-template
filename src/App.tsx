@@ -9,6 +9,7 @@ import { StoreContext } from './Context';
 import { Sidebar } from './Components/Sidebar/Sidebar';
 import { ChatRoom } from './Components/ChatRoom/ChatRoom';
 import { ChatRoomHolder } from './Components/ChatRoomHolder/ChatRoomHolder';
+import SavedMessages from './Components/SavedMessages/SavedMessages'
 
 const client = generateClient<Schema>();
 
@@ -106,7 +107,9 @@ function App() {
 			/>
 			<div className={style.content}>
 				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
-				{currentChat ? (
+				{activeTab === 'saved' ? (
+					<SavedMessages />
+				) : currentChat ? (
 					<ChatRoom currentChat={currentChat} />
 				) : (
 					<ChatRoomHolder />
@@ -115,5 +118,5 @@ function App() {
 			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 		</main>
 	);
-}
+}	
 export default App;
