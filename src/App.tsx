@@ -21,7 +21,7 @@ function App() {
 	const [currentChat, setCurrentChat] = useState<{
 		chatId: string;
 		email: string;
-	}>();
+	} | null>();
 
 	useEffect(() => {
 		const getUser = async () => {
@@ -50,7 +50,6 @@ function App() {
 			console.error('No current user found.');
 			return;
 		}
-
 		store!.setIsChatAssistant(false);
 		try {
 			const { data: ChatParticipant } = await client.models.ChatParticipant.get(
@@ -111,9 +110,14 @@ function App() {
 				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
 
 				{store!.isChatAssistant ? (
-					<ChatAssistantRoom />
+					<ChatAssistantRoom
+						
+					/>
 				) : currentChat ? (
-					<ChatRoom currentChat={currentChat} />
+					<ChatRoom
+						setCurrentChat={() => setCurrentChat(null)}
+						currentChat={currentChat}
+					/>
 				) : (
 					<ChatRoomHolder />
 				)}

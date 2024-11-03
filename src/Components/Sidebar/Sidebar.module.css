@@ -1,5 +1,24 @@
 .sidebar {
-	min-width: 266px;
+	width: 266px;
 	background: white;
 	padding: 10px 20px;
+}
+
+.btnBack {
+	display: none;
+}
+
+@media screen and (max-width: 720px) {
+	.sidebar {
+		width: 100%;
+		transition: transform 1s linear;
+
+	}
+
+	.btnBack {
+		margin-bottom: 30px;
+		display: block;
+		position: relative;
+		left: -45px;
+	}
 }

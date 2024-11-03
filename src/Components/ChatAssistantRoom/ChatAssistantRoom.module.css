@@ -2,13 +2,25 @@
 	background: rgb(226, 226, 226);
 	width: 100%;
 	border-left: 3px solid rgb(0, 115, 209);
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.header {
+	display: flex;
+	margin: 0 0px 5px 0px;
+	padding: 10px;
+	background-color: rgb(0, 87, 187);
+	position: relative;
+	align-items: center;
 }
 
 .messages {
-	height: 535px;
 	overflow-y: scroll;
 	padding: 0 10px;
 	padding: 0px 10px;
+	flex-grow: 1;
 }
 
 .message {
@@ -33,11 +45,9 @@
 }
 
 .room_name {
-	margin: 0 0px 5px 0px;
-	padding: 10px;
-	background-color: rgb(0, 87, 187);
 	color: white;
 	text-align: center;
+	width: 100%;
 }
 
 .form {
@@ -50,13 +60,17 @@
 
 .input {
 	flex: 1;
-	padding: 10px;
+	padding: 10px 75px 10px 10px;
 	border-radius: 20px;
 	border: 1px solid #ddd;
 	outline: none;
+	display: block;
+	width: 100%;
 }
 
 .btn {
+	position: absolute;
+	right: 10px;
 	margin-left: 10px;
 	padding: 8px 16px;
 	border-radius: 20px;
@@ -70,5 +84,31 @@
 
 .btn.active {
 	scale: 1;
-	transition: scale 0.1s linear;
+}
+
+.btnBack {
+	display: none;
+}
+
+@media screen and (max-width: 720px) {
+	.room {
+		display: none;
+	}
+
+	.room.active {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		border: 0;
+	}
+
+	.btnBack.active {
+		display: flex;
+		align-items: center;
+		position: absolute;
+	}
 }

@@ -9,11 +9,14 @@ interface Props {
 }
 
 export const Sidebar: React.FC<Props> = ({ activeTab, getChat }) => {
+
 	return (
-		<div className={style.sidebar}>
+		<div className={`${style.sidebar}`}>
+
 			{activeTab === 'user' && (
 				<Users onUserSelect={(userId) => getChat(userId)} />
 			)}
+
 			{activeTab === 'chat' && (
 				<Chats onUserSelect={(userId) => getChat(userId)} />
 			)}

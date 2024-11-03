@@ -4,17 +4,22 @@
 	padding: 10px;
 	border-top: 1px solid #e0e0e0;
 	width: 100%;
+	position: relative;
 }
 
 .input {
 	flex: 1;
-	padding: 10px;
+	padding: 10px 75px 10px 10px;
 	border-radius: 20px;
 	border: 1px solid #ddd;
 	outline: none;
+	display: block;
+	width: 100%;
 }
 
 .btn {
+	position: absolute;
+	right: 10px;
 	margin-left: 10px;
 	padding: 8px 16px;
 	border-radius: 20px;
@@ -28,7 +33,6 @@
 
 .btn.active {
 	scale: 1;
-	transition: scale 0.1s linear;
 }
 
 .btn:hover {

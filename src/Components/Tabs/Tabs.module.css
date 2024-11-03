@@ -8,19 +8,39 @@
 	border: none; /* Без рамки для вкладок */
 	cursor: pointer; /* Показує, що вкладка є клікабельною */
 	transition: background-color 0.3s; /* Додавання анімації при наведенні для фону і тіні */
-    outline: none;
-    border-radius: 0;
-    width: 100%;
+	outline: none;
+	border-radius: 0;
+	width: 100%;
 	color: white;
 }
 
 .tab.active {
 	background-color: #3b9dff; /* Активний колір для вибраної вкладки */
 	color: white; /* Колір тексту для активної вкладки */
-    outline: none;
+	outline: none;
 }
 
 .tab:hover {
 	background-color: #53a9ff; /* Зміна фону вкладки при наведенні курсора */
-    outline: none;
+	outline: none;
+}
+
+.icon{
+	display: none;
+}
+
+@media screen and (max-width: 720px) {
+	.tab{
+		height: 50px;
+		padding: 0;
+		padding-top: 10px;
+	}
+
+	.title {
+		display: none;
+	}
+
+	.icon{
+		display: block;
+	}
 }
