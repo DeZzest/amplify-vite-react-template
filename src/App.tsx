@@ -9,6 +9,7 @@ import { StoreContext } from './Context';
 import { Sidebar } from './Components/Sidebar/Sidebar';
 import { ChatRoom } from './Components/ChatRoom/ChatRoom';
 import { ChatRoomHolder } from './Components/ChatRoomHolder/ChatRoomHolder';
+import { ChatAssistantRoom } from './Components/ChatAssistantRoom/ChatAssistantRoom';
 
 const client = generateClient<Schema>();
 
@@ -20,7 +21,7 @@ function App() {
 	const [currentChat, setCurrentChat] = useState<{
 		chatId: string;
 		email: string;
-	}>();
+	} | null>();
 
 	useEffect(() => {
 		const getUser = async () => {
@@ -41,7 +42,7 @@ function App() {
 		};
 
 		getUser();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user]);
 
 	const getChat = async (userId: string) => {
@@ -49,6 +50,7 @@ function App() {
 			console.error('No current user found.');
 			return;
 		}
+		store!.setIsChatAssistant(false);
 		try {
 			const { data: ChatParticipant } = await client.models.ChatParticipant.get(
 				{
@@ -106,8 +108,16 @@ function App() {
 			/>
 			<div className={style.content}>
 				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
-				{currentChat ? (
-					<ChatRoom currentChat={currentChat} />
+
+				{store!.isChatAssistant ? (
+					<ChatAssistantRoom
+						
+					/>
+				) : currentChat ? (
+					<ChatRoom
+						setCurrentChat={() => setCurrentChat(null)}
+						currentChat={currentChat}
+					/>
 				) : (
 					<ChatRoomHolder />
 				)}

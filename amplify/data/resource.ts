@@ -1,4 +1,17 @@
-import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import {
+	type ClientSchema,
+	a,
+	defineData,
+	defineFunction,
+	secret,
+} from '@aws-amplify/backend';
+
+const echoHandler = defineFunction({
+	entry: './gptMessageResponce-handler/handler.ts',
+	environment: {
+		API_KEY: secret('api_key'),
+	},
+});
 
 const schema = a.schema({
 	User: a
@@ -8,11 +21,7 @@ const schema = a.schema({
 			savedMessages: a.hasMany('SavedMessage', 'userId'),
 			chatParticipants: a.hasMany('ChatParticipant', 'userId'),
 		})
-		.authorization((allow) => [
-			//allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-			allow.authenticated(),
-			allow.owner(),
-		]),
+		.authorization((allow) => [allow.authenticated(), allow.owner()]),
 
 	Message: a
 		.model({
@@ -22,11 +31,7 @@ const schema = a.schema({
 			user: a.belongsTo('User', 'userId'),
 			chat: a.belongsTo('Chat', 'chatId'),
 		})
-		.authorization((allow) => [
-			//allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-			allow.authenticated(),
-			allow.owner(),
-		]),
+		.authorization((allow) => [allow.authenticated(), allow.owner()]),
 
 	Chat: a
 		.model({
@@ -34,11 +39,7 @@ const schema = a.schema({
 			messages: a.hasMany('Message', 'chatId'),
 			chatParticipants: a.hasMany('ChatParticipant', 'chatId'),
 		})
-		.authorization((allow) => [
-			//allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-			allow.authenticated(),
-			allow.owner(),
-		]),
+		.authorization((allow) => [allow.authenticated(), allow.owner()]),
 
 	ChatParticipant: a
 		.model({
@@ -47,11 +48,7 @@ const schema = a.schema({
 			user: a.belongsTo('User', 'userId'),
 			chat: a.belongsTo('Chat', 'chatId'),
 		})
-		.authorization((allow) => [
-			//allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-			allow.authenticated(),
-			allow.owner(),
-		]),
+		.authorization((allow) => [allow.authenticated(), allow.owner()]),
 
 	SavedMessage: a
 		.model({
@@ -62,11 +59,18 @@ const schema = a.schema({
 			chatId: a.id(),
 			isSaved: a.boolean(),
 		})
-		.authorization((allow) => [
-			//allow.groups(['Admin']).to(['read', 'create', 'update', 'delete']),
-			allow.authenticated(),
-			allow.owner(),
-		]),
+		.authorization((allow) => [allow.authenticated(), allow.owner()]),
+
+	GptMessageResponce: a.customType({
+		content: a.string().required(),
+	}),
+
+	GptMessage: a
+		.query()
+		.arguments({ content: a.string() })
+		.returns(a.ref('GptMessageResponce').required())
+		.authorization((allow) => [allow.authenticated()])
+		.handler(a.handler.function(echoHandler)),
 });
 
 export type Schema = ClientSchema<typeof schema>;

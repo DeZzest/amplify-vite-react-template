@@ -5,6 +5,7 @@ import style from './ChatRoom.module.css';
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
 import { StoreContext } from '../../Context';
+import { IoArrowBackCircleSharp } from 'react-icons/io5';
 
 const client = generateClient<Schema>();
 
@@ -13,9 +14,10 @@ interface Props {
 		chatId: string;
 		email: string;
 	};
+	setCurrentChat: () => void;
 }
 
-export const ChatRoom: React.FC<Props> = ({ currentChat }) => {
+export const ChatRoom: React.FC<Props> = ({ currentChat, setCurrentChat }) => {
 	const store = useContext(StoreContext);
 	const [messages, setMessages] = useState<
 		{
@@ -40,7 +42,6 @@ export const ChatRoom: React.FC<Props> = ({ currentChat }) => {
 					userId: item.userId!,
 				}));
 
-				console.log(messages);
 				setMessages(messages);
 			},
 		});
@@ -51,8 +52,16 @@ export const ChatRoom: React.FC<Props> = ({ currentChat }) => {
 	}, [currentChat]);
 
 	return (
-		<div className={style.room}>
-			<h4 className={style.room_name}>{currentChat.email}</h4>
+		<div className={`${style.room} ${currentChat && style.active}`}>
+			<div className={style.header}>
+				<div
+					onClick={() => setCurrentChat()}
+					className={`${style.btnBack} ${currentChat && style.active}`}
+				>
+					<IoArrowBackCircleSharp size={30} color={'white'}/>
+				</div>
+				<h4 className={style.room_name}>{currentChat.email}</h4>
+			</div>
 
 			<div className={style.messages}>
 				{messages.map((item) => (
