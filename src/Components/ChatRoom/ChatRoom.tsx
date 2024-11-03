@@ -51,6 +51,19 @@ export const ChatRoom: React.FC<Props> = ({ currentChat, setCurrentChat }) => {
 		};
 	}, [currentChat]);
 
+	const handleSaveMessage = async (content: string) => {
+        if (!store?.currentUser) {
+            console.error('No current user found');
+            return;
+        }
+        await client.models.SavedMessage.create({
+            content,
+            userId: store.currentUser.id,
+            chatId: currentChat.chatId,
+            isSaved: true
+        });
+    };
+
 	return (
 		<div className={`${style.room} ${currentChat && style.active}`}>
 			<div className={style.header}>
@@ -74,6 +87,7 @@ export const ChatRoom: React.FC<Props> = ({ currentChat, setCurrentChat }) => {
 						variant={
 							item.userId === store?.currentUser?.id ? 'owner' : 'friend'
 						}
+						onSaveMessage={handleSaveMessage}
 					/>
 				))}
 			</div>

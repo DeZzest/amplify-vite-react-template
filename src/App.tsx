@@ -9,6 +9,7 @@ import { StoreContext } from './Context';
 import { Sidebar } from './Components/Sidebar/Sidebar';
 import { ChatRoom } from './Components/ChatRoom/ChatRoom';
 import { ChatRoomHolder } from './Components/ChatRoomHolder/ChatRoomHolder';
+import SavedMessages from './Components/SavedMessages/SavedMessages'
 import { ChatAssistantRoom } from './Components/ChatAssistantRoom/ChatAssistantRoom';
 
 const client = generateClient<Schema>();
@@ -108,8 +109,9 @@ function App() {
 			/>
 			<div className={style.content}>
 				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
-
-				{store!.isChatAssistant ? (
+				{activeTab === 'saved' ? (
+					<SavedMessages />
+				) : store!.isChatAssistant ? (
 					<ChatAssistantRoom
 						
 					/>
@@ -125,5 +127,5 @@ function App() {
 			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 		</main>
 	);
-}
+}	
 export default App;
