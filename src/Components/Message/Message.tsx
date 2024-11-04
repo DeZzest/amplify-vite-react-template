@@ -10,14 +10,11 @@ const client = generateClient<Schema>();
 interface MessageProps {
 	variant: 'owner' | 'friend';
 	msgData: { content: string; createdAt: string; id: string };
-	onSaveMessage: (message: string) => void;
+	onSaveMessage?: (content: string, ) => void;
+	disableContextMenu?: boolean;
 }
 
-const Message: React.FC<MessageProps> = ({
-	variant,
-	msgData,
-	onSaveMessage,
-}) => {
+const Message: React.FC<MessageProps> = ({ variant, msgData, onSaveMessage, disableContextMenu = false }) => {
 	const isOwner = variant === 'owner';
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 	const [show, setShow] = useState(false);
@@ -26,6 +23,10 @@ const Message: React.FC<MessageProps> = ({
 		await client.models.Message.delete({ id: msgData.id });
 	};
 
+	const saveMessage = async () => {
+		await onSaveMessage!(msgData.content);
+	};
+	
 	return (
 		<div>
 			<div
@@ -33,12 +34,12 @@ const Message: React.FC<MessageProps> = ({
 			>
 				<div
 					onContextMenu={(e) => {
-						e.preventDefault();
-						setPosition({
-							x: isOwner ? e.clientX - 120 : e.clientX,
-							y: e.clientY,
-						});
-						setShow(true);
+
+						if (!disableContextMenu) {
+							e.preventDefault();
+							setPosition({ x: isOwner ? e.clientX - 120 : e.clientX, y: e.clientY });
+							setShow(true);
+						}
 					}}
 					className={style.content}
 				>
@@ -58,7 +59,7 @@ const Message: React.FC<MessageProps> = ({
 						});
 					}}
 					deleteMsg={deleteMsg}
-					saveMsg={() => onSaveMessage(msgData.content)}
+					saveMsg={saveMessage}
 				/>
 			) : (
 				<ContextMenu
@@ -70,7 +71,7 @@ const Message: React.FC<MessageProps> = ({
 							console.error('Error copying text: ', err);
 						});
 					}}
-					saveMsg={() => onSaveMessage(msgData.content)}
+					saveMsg={saveMessage}
 				/>
 			)}
 		</div>

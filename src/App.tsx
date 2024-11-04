@@ -9,6 +9,7 @@ import { StoreContext } from './Context';
 import { Sidebar } from './Components/Sidebar/Sidebar';
 import { ChatRoom } from './Components/ChatRoom/ChatRoom';
 import { ChatRoomHolder } from './Components/ChatRoomHolder/ChatRoomHolder';
+import SavedMessages from './Components/SavedMessages/SavedMessages';
 import { ChatAssistantRoom } from './Components/ChatAssistantRoom/ChatAssistantRoom';
 
 const client = generateClient<Schema>();
@@ -99,7 +100,7 @@ function App() {
 
 	return (
 		<main className={style.wrapper}>
-			<div className={style.app}> 
+			<div className={style.app}>
 				<NavigationBar
 					userProfile={{
 						name: user?.signInDetails?.loginId || 'Guest',
@@ -115,7 +116,9 @@ function App() {
 						getChat={(userId) => getChat(userId)}
 					/>
 
-					{store!.isChatAssistant ? (
+					{activeTab === 'saved' ? (
+						<SavedMessages />
+					) : store!.isChatAssistant ? (
 						<ChatAssistantRoom />
 					) : currentChat ? (
 						<ChatRoom
