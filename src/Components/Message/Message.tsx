@@ -13,7 +13,11 @@ interface MessageProps {
 	onSaveMessage: (message: string) => void;
 }
 
-const Message: React.FC<MessageProps> = ({ variant, msgData, onSaveMessage }) => {
+const Message: React.FC<MessageProps> = ({
+	variant,
+	msgData,
+	onSaveMessage,
+}) => {
 	const isOwner = variant === 'owner';
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 	const [show, setShow] = useState(false);
@@ -30,7 +34,10 @@ const Message: React.FC<MessageProps> = ({ variant, msgData, onSaveMessage }) =>
 				<div
 					onContextMenu={(e) => {
 						e.preventDefault();
-						setPosition({ x: e.clientX, y: e.clientY });
+						setPosition({
+							x: isOwner ? e.clientX - 120 : e.clientX,
+							y: e.clientY,
+						});
 						setShow(true);
 					}}
 					className={style.content}
