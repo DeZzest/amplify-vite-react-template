@@ -5,7 +5,6 @@ import style from './SavedMessages.module.css';
 import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
 import { StoreContext } from '../../Context';
-import { v4 as uuidv4 } from 'uuid';
 
 const client = generateClient<Schema>();
 
@@ -20,12 +19,12 @@ const SavedMessages: React.FC = () => {
     const [savedMessages, setSavedMessages] = useState<Array<MsgData>>([]);
     const [isLoadingSavedMessages, setIsLoadingSavedMessages] = useState<boolean>(true);
     const [contextMenu, setContextMenu] = useState<{ show: boolean; position: { x: number; y: number }; msgId: string | null; content: string | null }>({ show: false, position: { x: 0, y: 0 }, msgId: null, content: null });
-    const [newMessageContent, setNewMessageContent] = useState<string>('');
+	const [newMessageContent, setNewMessageContent] = useState('');
     const store = useContext(StoreContext);
 
     useEffect(() => {
         const fetchSavedMessages = async () => {
-            const userId = store?.currentUser?.id; // Отримуємо ID користувача
+            const userId = store?.currentUser?.id; 
             if (!userId) {
                 setIsLoadingSavedMessages(false);
                 return;
@@ -33,7 +32,7 @@ const SavedMessages: React.FC = () => {
 
             setIsLoadingSavedMessages(true);
             const savedMsgSub = client.models.SavedMessage.observeQuery({
-                filter: { userId: { eq: userId } } // Фільтруємо за userId
+                filter: { userId: { eq: userId } } 
             }).subscribe({
                 next: (data) => {
                     const dbMessages = data.items
@@ -45,7 +44,7 @@ const SavedMessages: React.FC = () => {
                         }))
                         .filter(item => item.content !== '');
 
-                    setSavedMessages(dbMessages.sort((a, b) => b.createdAt.localeCompare(a.createdAt))); // Сортуємо за створеним часом
+                    setSavedMessages(dbMessages.sort((a, b) => b.createdAt.localeCompare(a.createdAt)));
                     setIsLoadingSavedMessages(false);
                 },
                 error: () => {
@@ -87,29 +86,41 @@ const SavedMessages: React.FC = () => {
     };
 
     const handleSaveMessage = async () => {
-        const userId = store?.currentUser?.id; // Отримуємо ID користувача
-        if (!userId || !newMessageContent) {
-            return;
-        }
-
-        const newMessage: MsgData = {
-            id: uuidv4(), // Генеруємо унікальний ID для повідомлення
-            content: newMessageContent,
-            userId: userId, // Використовуємо userId
-            createdAt: new Date().toISOString(),
-        };
-
-        await client.models.SavedMessage.create(newMessage); // Зберігаємо повідомлення в базі даних
-
-        setSavedMessages((prevMessages) => {
-            const updatedMessages = [...prevMessages, newMessage].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-
-            return updatedMessages;
-        });
-
-        setNewMessageContent('');
-    };
-
+		const userId = store?.currentUser?.id;
+		if (!userId || !newMessageContent) {
+			return;
+		}
+	
+		setNewMessageContent('');
+		
+		try {
+			const { data, errors } = await client.models.SavedMessage.create({
+				content: newMessageContent,
+				userId: store?.currentUser?.id,
+			});
+	
+			if (data) {
+				const newMessage: MsgData = {
+					content: newMessageContent,
+					userId: userId,
+					id: data.id,
+					createdAt: new Date().toISOString(),
+				};
+	
+				setSavedMessages((prevMessages) => {
+					const updatedMessages = [...prevMessages, newMessage].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+					return updatedMessages;
+				});
+			}
+	
+			if (errors) {
+				console.error("Errors:", errors);
+			}
+		} catch (error) {
+			console.error("Error creating message:", error);
+		}
+	};
+	
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         handleSaveMessage();
