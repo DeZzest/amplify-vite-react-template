@@ -56,7 +56,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 
 
 	return (
-		<div className="app" style={{ width: '100%', height: '100%' }}>
+		<>
 			{show && (
 				<div
 					id="context-menu"
@@ -82,7 +82,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 					)}
 				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

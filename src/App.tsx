@@ -9,7 +9,7 @@ import { StoreContext } from './Context';
 import { Sidebar } from './Components/Sidebar/Sidebar';
 import { ChatRoom } from './Components/ChatRoom/ChatRoom';
 import { ChatRoomHolder } from './Components/ChatRoomHolder/ChatRoomHolder';
-import SavedMessages from './Components/SavedMessages/SavedMessages'
+import SavedMessages from './Components/SavedMessages/SavedMessages';
 import { ChatAssistantRoom } from './Components/ChatAssistantRoom/ChatAssistantRoom';
 
 const client = generateClient<Schema>();
@@ -99,33 +99,39 @@ function App() {
 	};
 
 	return (
-		<main className={style.app}>
-			<NavigationBar
-				userProfile={{
-					name: user?.signInDetails?.loginId || 'Guest',
-					email: user?.signInDetails?.loginId ? user.signInDetails.loginId : '',
-				}}
-				onSignOut={signOut}
-			/>
-			<div className={style.content}>
-				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
-				{activeTab === 'saved' ? (
-					<SavedMessages />
-				) : store!.isChatAssistant ? (
-					<ChatAssistantRoom
-						
+		<main className={style.wrapper}>
+			<div className={style.app}>
+				<NavigationBar
+					userProfile={{
+						name: user?.signInDetails?.loginId || 'Guest',
+						email: user?.signInDetails?.loginId
+							? user.signInDetails.loginId
+							: '',
+					}}
+					onSignOut={signOut}
+				/>
+				<div className={style.content}>
+					<Sidebar
+						activeTab={activeTab}
+						getChat={(userId) => getChat(userId)}
 					/>
-				) : currentChat ? (
-					<ChatRoom
-						setCurrentChat={() => setCurrentChat(null)}
-						currentChat={currentChat}
-					/>
-				) : (
-					<ChatRoomHolder />
-				)}
+
+					{activeTab === 'saved' ? (
+						<SavedMessages />
+					) : store!.isChatAssistant ? (
+						<ChatAssistantRoom />
+					) : currentChat ? (
+						<ChatRoom
+							setCurrentChat={() => setCurrentChat(null)}
+							currentChat={currentChat}
+						/>
+					) : (
+						<ChatRoomHolder />
+					)}
+				</div>
+				<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 			</div>
-			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 		</main>
 	);
-}	
+}
 export default App;

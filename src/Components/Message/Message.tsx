@@ -34,9 +34,10 @@ const Message: React.FC<MessageProps> = ({ variant, msgData, onSaveMessage, disa
 			>
 				<div
 					onContextMenu={(e) => {
+
 						if (!disableContextMenu) {
 							e.preventDefault();
-							setPosition({ x: e.clientX, y: e.clientY });
+							setPosition({ x: isOwner ? e.clientX - 120 : e.clientX, y: e.clientY });
 							setShow(true);
 						}
 					}}
