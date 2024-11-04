@@ -98,31 +98,36 @@ function App() {
 	};
 
 	return (
-		<main className={style.app}>
-			<NavigationBar
-				userProfile={{
-					name: user?.signInDetails?.loginId || 'Guest',
-					email: user?.signInDetails?.loginId ? user.signInDetails.loginId : '',
-				}}
-				onSignOut={signOut}
-			/>
-			<div className={style.content}>
-				<Sidebar activeTab={activeTab} getChat={(userId) => getChat(userId)} />
+		<main className={style.wrapper}>
+			<div className={style.app}> 
+				<NavigationBar
+					userProfile={{
+						name: user?.signInDetails?.loginId || 'Guest',
+						email: user?.signInDetails?.loginId
+							? user.signInDetails.loginId
+							: '',
+					}}
+					onSignOut={signOut}
+				/>
+				<div className={style.content}>
+					<Sidebar
+						activeTab={activeTab}
+						getChat={(userId) => getChat(userId)}
+					/>
 
-				{store!.isChatAssistant ? (
-					<ChatAssistantRoom
-						
-					/>
-				) : currentChat ? (
-					<ChatRoom
-						setCurrentChat={() => setCurrentChat(null)}
-						currentChat={currentChat}
-					/>
-				) : (
-					<ChatRoomHolder />
-				)}
+					{store!.isChatAssistant ? (
+						<ChatAssistantRoom />
+					) : currentChat ? (
+						<ChatRoom
+							setCurrentChat={() => setCurrentChat(null)}
+							currentChat={currentChat}
+						/>
+					) : (
+						<ChatRoomHolder />
+					)}
+				</div>
+				<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 			</div>
-			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 		</main>
 	);
 }
