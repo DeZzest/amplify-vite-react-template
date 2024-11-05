@@ -20,7 +20,6 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 		const { data } = await client.queries.GptMessage({
 			content: value,
 		});
-
 		setMessages((prev) => [
 			...prev,
 			{ user: 'assistant', content: data!.content },
