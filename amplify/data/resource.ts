@@ -10,6 +10,7 @@ const echoHandler = defineFunction({
 	entry: './gptMessageResponce-handler/handler.ts',
 	environment: {
 		API_KEY: secret('api_key'),
+		STABLE_KEY: secret('stable_key')
 	},
 	timeoutSeconds: 30,
 });
