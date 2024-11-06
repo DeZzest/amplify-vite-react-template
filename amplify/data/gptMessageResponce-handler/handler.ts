@@ -59,7 +59,7 @@ export const handler: Schema['GptMessage']['functionHandler'] = async (
 	});
 
 	const raw = {
-		key: '9vwZn0H4zu0uMaHLiO30Prtj1jv8GiOckLXIiYDgRSvf0vtE0qwl6tyhdkuL',
+		key: process.env.STABLE_KEY,
 		prompt: event.arguments.content,
 		negative_prompt: null,
 		width: '512',
