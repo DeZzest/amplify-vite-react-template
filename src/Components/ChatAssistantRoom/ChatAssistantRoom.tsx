@@ -11,19 +11,32 @@ interface Props {}
 
 export const ChatAssistantRoom: React.FC<Props> = () => {
 	const [messages, setMessages] = useState<
-		{ content: string; user: 'user' | 'assistant' }[]
+		{
+			img?: string;
+			aiName?: string;
+			content?: string;
+			user: 'user' | 'assistant';
+		}[]
 	>([]);
 	const [value, setValue] = useState<string>('');
 	const store = useContext(StoreContext);
 
 	const sendMessage = async () => {
-		const { data } = await client.queries.GptMessage({
+		const { data, errors } = await client.queries.GptMessage({
 			content: value,
 		});
-		setMessages((prev) => [
-			...prev,
-			{ user: 'assistant', content: data!.content },
-		]);
+		console.log(data, errors);
+		if (data) {
+			setMessages((prev) => [
+				...prev,
+				{ user: 'assistant', img: data.imgGpt, aiName: 'gpt' },
+			]);
+			setMessages((prev) => [
+				...prev,
+				{ user: 'assistant', img: data.imgStable, aiName: 'stable' },
+			]);
+		}
+
 		setValue('');
 	};
 
@@ -36,7 +49,7 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 						store!.isChatAssistant && style.active
 					}`}
 				>
-					<IoArrowBackCircleSharp size={30} color={'white'}/>
+					<IoArrowBackCircleSharp size={30} color={'white'} />
 				</div>
 				<h4 className={style.room_name}>Assistant</h4>
 			</div>
@@ -48,7 +61,15 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 							item.user === 'user' ? style.owner : style.friend
 						}`}
 					>
-						<p className={style.content}>{item.content}</p>
+						{item.user === 'user' && (
+							<p className={style.content}>{item.content}</p>
+						)}
+						{item.user === 'assistant' && (
+							<p className={style.content}>
+								<p className={style.content}>{item.aiName === 'gpt' ? 'GPT ' : 'STABLE '}</p>
+								<img className={style.photo} src={item.img} />
+							</p>
+						)}
 					</li>
 				))}
 			</ul>

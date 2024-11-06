@@ -11,6 +11,7 @@ const echoHandler = defineFunction({
 	environment: {
 		API_KEY: secret('api_key'),
 	},
+	timeoutSeconds: 30,
 });
 
 const schema = a.schema({
@@ -62,12 +63,13 @@ const schema = a.schema({
 		.authorization((allow) => [allow.authenticated(), allow.owner()]),
 
 	GptMessageResponce: a.customType({
-		content: a.string().required(),
+		imgGpt: a.string().required(),
+		imgStable: a.string().required(),
 	}),
 
 	GptMessage: a
 		.query()
-		.arguments({ content: a.string() })
+		.arguments({ content: a.string().required() })
 		.returns(a.ref('GptMessageResponce').required())
 		.authorization((allow) => [allow.authenticated()])
 		.handler(a.handler.function(echoHandler)),

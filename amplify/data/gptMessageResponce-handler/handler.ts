@@ -1,7 +1,8 @@
 import OpenAI from 'openai';
 import type { Schema } from '../resource';
+import axios from 'axios';
 
-const META_PROMPT = `
+/* const META_PROMPT = `
 You are programmed to answer questions exclusively about fairy tales, concentrating on two main areas:
 
 1. **Stories**: Provide summaries, themes, and key plot elements of fairy tales.
@@ -40,8 +41,7 @@ When a user requests to "generate a picture of" a character or provides a brief 
      *Description*: The Cheshire Cat has a distinctive, wide grin that showcases its sharp teeth. Its fur is a vibrant mix of purple and pink stripes, creating a mesmerizing pattern. The cat has large, luminous yellow eyes that appear to glow, reflecting its mischievous nature. It often sits perched on branches, vanishing and reappearing at will, embodying the whimsical and unpredictable essence of Wonderland.”
 
 Your output must adhere to these guidelines to ensure a clear and detailed description focused on the character's external features.
-`.trim();
-
+`.trim(); */
 
 export const handler: Schema['GptMessage']['functionHandler'] = async (
 	event
@@ -50,23 +50,46 @@ export const handler: Schema['GptMessage']['functionHandler'] = async (
 		apiKey: process.env.API_KEY,
 	});
 
-	const completion = await openai.chat.completions.create({
-		model: 'gpt-4o',
-
-		messages: [
-			{ 
-				role: 'system', 
-				content: META_PROMPT 
-			},
-			{
-				role: 'user',
-				content: `Task, Goal, or Current Prompt:\n${event.arguments.content!}`
-				//content: event.arguments.content!,
-			},
-		],
+	const imgGpt = await openai.images.generate({
+		model: 'dall-e-3',
+		prompt: event.arguments.content,
+		size: '1024x1024',
+		quality: 'standard',
+		n: 1,
 	});
 
+	const raw = {
+		key: '9vwZn0H4zu0uMaHLiO30Prtj1jv8GiOckLXIiYDgRSvf0vtE0qwl6tyhdkuL',
+		prompt: event.arguments.content,
+		negative_prompt: null,
+		width: '512',
+		height: '512',
+		samples: '1',
+		num_inference_steps: '20',
+		seed: null,
+		guidance_scale: 7.5,
+		safety_checker: 'yes',
+		multi_lingual: 'no',
+		panorama: 'no',
+		self_attention: 'no',
+		upscale: 'no',
+		embeddings_model: null,
+		webhook: null,
+		track_id: null,
+	};
+
+	const imgStable = await axios.post(
+		'https://stablediffusionapi.com/api/v3/text2img',
+		raw,
+		{
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}
+	);
+
 	return {
-		content: completion.choices[0].message.content!,
+		imgStable: imgStable.data.output[0],
+		imgGpt: imgGpt.data[0].url!,
 	};
 };
