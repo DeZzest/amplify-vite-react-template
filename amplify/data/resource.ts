@@ -10,7 +10,7 @@ const echoHandler = defineFunction({
 	entry: './gptMessageResponce-handler/handler.ts',
 	environment: {
 		API_KEY: secret('api_key'),
-		STABLE_KEY: secret('stable_key')
+		STABLE_KEY: secret('stable_key'),
 	},
 	timeoutSeconds: 30,
 });
@@ -64,8 +64,9 @@ const schema = a.schema({
 		.authorization((allow) => [allow.authenticated(), allow.owner()]),
 
 	GptMessageResponce: a.customType({
-		imgGpt: a.string().required(),
-		imgStable: a.string().required(),
+		imgGpt: a.string(),
+		imgStable: a.string(),
+		content: a.string(),
 	}),
 
 	GptMessage: a

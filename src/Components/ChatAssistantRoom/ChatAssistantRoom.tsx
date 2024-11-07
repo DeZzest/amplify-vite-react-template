@@ -27,14 +27,17 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 		});
 		console.log(data, errors);
 		if (data) {
-			setMessages((prev) => [
-				...prev,
-				{ user: 'assistant', img: data.imgGpt, aiName: 'gpt' },
-			]);
-			setMessages((prev) => [
-				...prev,
-				{ user: 'assistant', img: data.imgStable, aiName: 'stable' },
-			]);
+			if (data.imgGpt) {
+				setMessages((prev) => [
+					...prev,
+					{ user: 'assistant', img: data.imgGpt!, aiName: 'gpt' },
+				]);
+			} else if (data.content) {
+				setMessages((prev) => [
+					...prev,
+					{ user: 'assistant', content: data.content!, aiName: 'gpt' },
+				]);
+			}
 		}
 
 		setValue('');
@@ -66,8 +69,14 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 						)}
 						{item.user === 'assistant' && (
 							<p className={style.content}>
-								<p className={style.content}>{item.aiName === 'gpt' ? 'GPT ' : 'STABLE '}</p>
-								<img className={style.photo} src={item.img} />
+								<p className={style.content}>
+									{item.aiName === 'gpt' ? 'GPT ' : 'STABLE '}
+								</p>
+								{item.img ? (
+									<img className={style.photo} src={item.img} />
+								) : (
+									<p>{item.content}</p>
+								)}
 							</p>
 						)}
 					</li>
