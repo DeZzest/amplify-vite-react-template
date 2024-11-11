@@ -1,6 +1,9 @@
-import OpenAI from 'openai';
 import type { Schema } from '../resource';
-import { ChatCompletionTool } from 'openai/resources/index.mjs';
+import { ChatOpenAI } from '@langchain/openai';
+import { HumanMessage, SystemMessage } from '@langchain/core/messages';
+
+import { StringOutputParser } from '@langchain/core/output_parsers';
+import OpenAI from 'openai';
 
 const META_PROMPT = `
 You are programmed to answer questions or generate img exclusively about fairy tales, concentrating on two main areas:
@@ -61,7 +64,7 @@ export const handler: Schema['GptMessage']['functionHandler'] = async (
 		return imgGpt.data[0].url!;
 	};
 
-	const tools: ChatCompletionTool[] = [
+	/* 	const tools: ChatCompletionTool[] = [
 		{
 			type: 'function',
 			function: {
@@ -81,13 +84,13 @@ export const handler: Schema['GptMessage']['functionHandler'] = async (
 				},
 			},
 		},
-	];
+	]; */
 
 	const openai = new OpenAI({
 		apiKey: process.env.API_KEY,
 	});
 
-	const response = await openai.chat.completions.create({
+	/* 	const response = await openai.chat.completions.create({
 		model: 'gpt-4o',
 		messages: [
 			{
@@ -100,7 +103,7 @@ export const handler: Schema['GptMessage']['functionHandler'] = async (
 			},
 		],
 		tools: tools,
-	});
+	}); */
 
 	/* 	const raw = {
 		key: process.env.STABLE_KEY,
@@ -132,7 +135,7 @@ export const handler: Schema['GptMessage']['functionHandler'] = async (
 		}
 	); */
 
-	const toolCall = response?.choices?.[0]?.message?.tool_calls?.[0];
+	/* 	const toolCall = response?.choices?.[0]?.message?.tool_calls?.[0];
 	const content = response?.choices?.[0]?.message?.content;
 
 	if (toolCall) {
@@ -149,5 +152,40 @@ export const handler: Schema['GptMessage']['functionHandler'] = async (
 			imgStable: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_F...',
 			content: content!,
 		};
+	} */
+
+	const lang = new ChatOpenAI({ apiKey: process.env.API_KEY, model: 'gpt-4o' });
+	const messages = [
+		new SystemMessage(
+			` Analyze the user's text and respond accordingly.
+				Respond in one of the following three ways:
+
+				1 If the request is to describe a character from a fairy tales, respond with text. text
+				2 If the request is to generate an image based on the provided description, respond with an image. image
+				3 If the request is not related to fairy tales characters, respond with "Wrong." Wrong
+			`
+		),
+		new HumanMessage(event.arguments.content),
+	];
+
+	const res = await lang.invoke(messages);
+	const parser = new StringOutputParser();
+	const resParser = await parser.invoke(res);
+
+	if (resParser === 'text') {
+		const messages1 = [
+			new SystemMessage(META_PROMPT),
+			new HumanMessage(event.arguments.content),
+		];
+
+		const res1 = await lang.invoke(messages1);
+		const parser1 = new StringOutputParser();
+		const resParser1 = await parser1.invoke(res1);
+
+		return { content: resParser1 };
+	} else if (resParser === 'image') {
+		return {imgGpt: await generateImg(event.arguments.content)}
+	} else {
+		return { content: resParser };
 	}
 };
