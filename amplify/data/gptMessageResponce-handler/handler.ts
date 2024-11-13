@@ -4,6 +4,8 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import OpenAI from 'openai';
+import { tool } from '@langchain/core/tools';
+import { z } from 'zod';
 
 const META_PROMPT = `
 You are tasked with exclusively responding about fairy tales, focusing on two main areas:
@@ -41,8 +43,9 @@ You are tasked with exclusively responding about fairy tales, focusing on two ma
      *Description*: Cinderella has long, golden hair styled in soft waves. She wears a sparkling, pale blue ball gown with delicate lace details on the sleeves and neckline, accompanied by clear glass slippers. Her expression is gentle and hopeful, reflecting her kind and resilient nature.
 
 2. **Image Generation**:
-   - When prompted with "Generate picture" or "Imagine" for Cinderella, create an image of Cinderella as a single character in her blue ball gown, focusing on her distinctive golden hair, glass slippers, and gentle expression. Keep the background neutral or subtly blurred to maintain focus on Cinderella.
-   - If the user specifies secondary characters, include them alongside Cinderella in supporting positions but ensure Cinderella remains the main focus.
+   - When prompted with "Generate picture" or "Imagine" for a fairytale character, create an image of the specified character as a single focal figure in their iconic outfit, emphasizing distinctive features like hair color, expression, and accessories. Keep the background neutral or subtly blurred to maintain focus on the character.
+   - If the user specifies additional characters, include them in supporting positions alongside the main character, but ensure the primary character remains the main focus.
+   - Response only the image URL without additional text. Example: https://oaidalleapiprodscus.blob.core.windows.net/private/org-uvFUMtrW828xjhfBLuidHOGa/user-xMZJniPa0R
 
 3. **Wrong Query Response**:
    - For any unrelated requests, respond with: "This AI is specialized in fairy tale descriptions and image generation only."
@@ -51,140 +54,64 @@ You are tasked with exclusively responding about fairy tales, focusing on two ma
 export const handler: Schema['GptMessage']['functionHandler'] = async (
 	event
 ) => {
-	const generateImg = async (content: string) => {
-		const imgGpt = await openai.images.generate({
-			model: 'dall-e-3',
-			prompt: content,
-			size: '1024x1024',
-			quality: 'standard',
-			n: 1,
-		});
-
-		return imgGpt.data[0].url!;
-	};
-
-	/* 	const tools: ChatCompletionTool[] = [
-		{
-			type: 'function',
-			function: {
-				name: 'generate_img',
-				description:
-					"generate img. Call this whenever you need to generate img, for example when a user message begin only with Genarate img 'Genetare img alisa from alisa in wonder country'",
-				parameters: {
-					type: 'object',
-					properties: {
-						content: {
-							type: 'string',
-							description: 'The prompt for generate img',
-						},
-					},
-					required: ['content'],
-					additionalProperties: false,
-				},
-			},
-		},
-	]; */
 
 	const openai = new OpenAI({
 		apiKey: process.env.API_KEY,
 	});
 
-	/* 	const response = await openai.chat.completions.create({
-		model: 'gpt-4o',
-		messages: [
-			{
-				role: 'system',
-				content: META_PROMPT,
-			},
-			{
-				role: 'user',
-				content: event.arguments.content,
-			},
-		],
-		tools: tools,
-	}); */
-
-	/* 	const raw = {
-		key: process.env.STABLE_KEY,
-		prompt: event.arguments.content,
-		negative_prompt: null,
-		width: '512',
-		height: '512',
-		samples: '1',
-		num_inference_steps: '20',
-		seed: null,
-		guidance_scale: 7.5,
-		safety_checker: 'yes',
-		multi_lingual: 'no',
-		panorama: 'no',
-		self_attention: 'no',
-		upscale: 'no',
-		embeddings_model: null,
-		webhook: null,
-		track_id: null,
-	}; */
-
-	/* const imgStable = await axios.post(
-		'https://stablediffusionapi.com/api/v3/text2img',
-		raw,
-		{
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-	); */
-
-	/* 	const toolCall = response?.choices?.[0]?.message?.tool_calls?.[0];
-	const content = response?.choices?.[0]?.message?.content;
-
-	if (toolCall) {
-		const arguments1 = JSON.parse(toolCall.function.arguments);
-		const content = arguments1.content;
-
-		const imgUrl = await generateImg(content);
-		return {
-			imgGpt: imgUrl!,
-			imgStable: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_F...',
-		};
-	} else {
-		return {
-			imgStable: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_F...',
-			content: content!,
-		};
-	} */
-
 	const lang = new ChatOpenAI({ apiKey: process.env.API_KEY, model: 'gpt-4o' });
 	const messages = [
-		new SystemMessage(
-			` Analyze the user's text and respond accordingly.
-				Respond in one of the following three ways:
-
-				1. If the request is to describe a character from a fairy tales, respond with text. text
-				2. If the request is to generate an image based on the provided description, respond with an image. image
-				3. For any other requests, respond with "I only specialize in fairy tale descriptions and image creation. Please make the correct request." wrong
-			`
-		),
+		new SystemMessage(META_PROMPT),
 		new HumanMessage(event.arguments.content),
 	];
 
-	const res = await lang.invoke(messages);
+	const generateImageTool = tool(
+		async ({ content }) => {
+			const imgGpt = await openai.images.generate({
+				model: 'dall-e-3',
+				prompt: content,
+				size: '1024x1024',
+				quality: 'standard',
+				n: 1,
+			});
+
+			return imgGpt.data[0].url!;
+		},
+		{
+			name: 'generateImage',
+			description: 'Can generate image from prompt',
+			schema: z.object({
+				content: z.string().describe('The prompt for generate image'),
+			}),
+		}
+	);
+
+	const langWithTools = lang.bindTools([generateImageTool]);
+	const aiMessage = await langWithTools.invoke(messages);
+
+	messages.push(aiMessage);
+
+	const toolsByName = {
+		generateImage: generateImageTool,
+	};
+
 	const parser = new StringOutputParser();
-	const resParser = await parser.invoke(res);
 
-	if (resParser === 'text') {
-		const messages1 = [
-			new SystemMessage(META_PROMPT),
-			new HumanMessage(event.arguments.content),
-		];
-
-		const res1 = await lang.invoke(messages1);
-		const parser1 = new StringOutputParser();
-		const resParser1 = await parser1.invoke(res1);
-
-		return { content: resParser1 };
-	} else if (resParser === 'image') {
-		return {imgGpt: await generateImg(event.arguments.content)}
-	} else {
-		return { content: resParser };
+	for (const toolCall of aiMessage.tool_calls!) {
+		const selectedTool = toolsByName[toolCall.name as keyof typeof toolsByName];
+		const toolMessage = await selectedTool.invoke(toolCall);
+		messages.push(toolMessage);
+		if (selectedTool) {
+			const gptUrl = await parser.invoke(await langWithTools.invoke(messages));
+			const urlPattern = /https?:\/\/[^\s)]+/;
+			const match = gptUrl.match(urlPattern);
+			return { imgGpt: match![0] };
+		}
 	}
+
+	const gptText = await parser.invoke(aiMessage);
+
+	return {
+		content: gptText,
+	};
 };
