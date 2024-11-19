@@ -4,10 +4,19 @@ import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../../amplify/data/resource';
 import { StoreContext } from '../../Context';
 import { IoArrowBackCircleSharp } from 'react-icons/io5';
+import { RichBar } from '../RichBar/RichBar';
 
 const client = generateClient<Schema>();
 
 interface Props {}
+
+const layout: ('row' | 'row-reverse' | 'column' | 'column-reverse')[] = [
+	'row',
+	'column',
+	'column-reverse',
+	'row-reverse',
+];
+const pos: ('start' | 'center' | 'end')[] = ['start', 'center', 'end'];
 
 export const ChatAssistantRoom: React.FC<Props> = () => {
 	const [messages, setMessages] = useState<
@@ -19,6 +28,8 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 		}[]
 	>([]);
 	const [value, setValue] = useState<string>('');
+	const [layoutVariant, setLayoutVariant] = useState<number[]>([0]);
+	const [posVariant, setPosVariant] = useState<number[]>([0]);
 	const store = useContext(StoreContext);
 
 	const sendMessage = async () => {
@@ -32,11 +43,15 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 					...prev,
 					{ user: 'assistant', img: data.imgGpt!, aiName: 'gpt' },
 				]);
+				setLayoutVariant([...layoutVariant, 0]);
+				setPosVariant([...posVariant, 0]);
 			} else if (data.content) {
 				setMessages((prev) => [
 					...prev,
 					{ user: 'assistant', content: data.content!, aiName: 'gpt' },
 				]);
+				setLayoutVariant([...layoutVariant, 0]);
+				setPosVariant([...posVariant, 0]);
 			}
 		}
 
@@ -58,7 +73,7 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 			</div>
 
 			<ul className={style.messages}>
-				{messages.map((item) => (
+				{messages.map((item, index) => (
 					<li
 						className={`${style.message} ${
 							item.user === 'user' ? style.owner : style.friend
@@ -68,8 +83,33 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 							<p className={style.content}>{item.content}</p>
 						)}
 						{item.user === 'assistant' && (
-							<p className={style.content}>
-								<p className={style.content}>
+							<p
+								className={style.content}
+								style={{
+									flexDirection: layout[layoutVariant[index]],
+									alignItems: pos[posVariant[index]],
+								}}
+							>
+								{item.user === 'assistant' && item.img && (
+									<RichBar
+										onChange={(layountVariant, posVariant) => {
+											setLayoutVariant((prev) => {
+												const updatedArray = [...prev];
+												updatedArray.splice(index, 1, layountVariant);
+												return updatedArray;
+											});
+
+											setPosVariant((prev) => {
+												const updatedArray = [...prev];
+												updatedArray.splice(index, 1, posVariant);
+												return updatedArray;
+											});
+
+											console.log(posVariant);
+										}}
+									/>
+								)}
+								<p style={{ textAlign: pos[posVariant[index]] }}>
 									{item.aiName === 'gpt' ? 'GPT ' : 'STABLE '}
 								</p>
 								{item.img ? (
@@ -95,6 +135,8 @@ export const ChatAssistantRoom: React.FC<Props> = () => {
 					className={`${style.btn} ${value && style.active}`}
 					onClick={() => {
 						setMessages((prev) => [...prev, { user: 'user', content: value }]);
+						setLayoutVariant([...layoutVariant, 0]);
+						setPosVariant([...posVariant, 0]);
 						sendMessage();
 					}}
 				>

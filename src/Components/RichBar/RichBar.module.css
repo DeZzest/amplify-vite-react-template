@@ -1,0 +1,47 @@
+.richBar{
+    position: absolute;
+    right: 10px;
+    top: 0;
+}
+
+.listGroup{
+    position: relative;
+    top: 0px;
+    background: #cccccc;
+    padding: 5px;
+    border-radius: 10px;
+    display: none;
+}
+
+.listGroup.active{
+    display: block;
+}
+
+.list{
+    display: flex;
+}
+
+.item{
+    padding: 4px;
+    margin: 3px;
+}
+
+.item.active{
+    background: white;
+    border-radius: 3px;
+    padding: 4px;
+}
+
+.btn{
+    display: flex;
+    justify-content: end;
+}
+
+.btn div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    width: 25px;
+    height: 25px;
+}
