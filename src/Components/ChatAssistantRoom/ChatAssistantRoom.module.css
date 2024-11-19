@@ -25,10 +25,10 @@
 }
 
 .message {
-	width: 100%;
+	position: relative;
 	display: flex;
 	justify-content: start;
-	margin: 20px 0;
+	margin: 65px 0 20px 0;
 }
 
 .message.owner {
@@ -40,10 +40,11 @@
 }
 
 .content {
+	position: relative;
 	background-color: #fff;
-	padding: 5px 10px;
+	padding: 25px 10px 5px 10px;
 	border-radius: 5px;
-	align-items: start;
+	display: flex;
 }
 
 .photo {
@@ -96,6 +97,8 @@
 .btnBack {
 	display: none;
 }
+
+
 
 @media screen and (max-width: 720px) {
 	.room {
