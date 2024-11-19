@@ -12,7 +12,7 @@ const echoHandler = defineFunction({
 		API_KEY: secret('api_key'),
 		STABLE_KEY: secret('stable_key'),
 	},
-	timeoutSeconds: 30,
+	timeoutSeconds: 40,
 });
 
 const schema = a.schema({

@@ -14,6 +14,7 @@
     "@langchain/openai": "^0.3.12",
     "aws-amplify": "^6.5.2",
     "axios": "^1.7.7",
+    "langchain": "^0.3.6",
     "openai": "^4.71.0",
     "react": "^18.3.1",
     "react-dom": "^18.2.0",
